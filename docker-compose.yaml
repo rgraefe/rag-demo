@@ -1,0 +1,34 @@
+version: "3"
+services:
+  postgres:
+    build: ./postgres
+    command: -c config_file=/etc/postgresql/postgresql.conf
+    env_file:
+      - postgres/postgres.env
+    ports:
+      - 127.0.0.1:5433:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./postgres/custom_postgres.conf:/etc/postgresql/postgresql.conf
+    shm_size: '2gb'
+
+  pgadmin:
+    build: ./pgadmin
+    env_file:
+      - pgadmin/pgadmin.env
+    entrypoint: >
+      /bin/sh -c "
+      cp -f /pgadmin4/pgpass /var/lib/pgadmin/storage/ralf.graefe_intel.com/;
+      cp -f /pgadmin4/servers.json /var/lib/pgadmin/storage/ralf.graefe_intel.com/;
+      chmod 600 /var/lib/pgadmin/storage/ralf.graefe_intel.com/pgpass;
+      chown pgadmin:pgadmin /var/lib/pgadmin/storage/ralf.graefe_intel.com/pgpass;
+      /entrypoint.sh
+      "
+    volumes:
+       - ./pgadmin/config/servers.json:/pgadmin4/servers.json # preconfigured servers/connections
+       - ./pgadmin/config/pgpass:/pgadmin4/pgpass
+    ports:
+    - 8484:80
+
+volumes:
+  db_data:
