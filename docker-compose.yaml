@@ -18,10 +18,10 @@ services:
       - pgadmin/pgadmin.env
     entrypoint: >
       /bin/sh -c "
-      cp -f /pgadmin4/pgpass /var/lib/pgadmin/storage/ralf.graefe_intel.com/;
-      cp -f /pgadmin4/servers.json /var/lib/pgadmin/storage/ralf.graefe_intel.com/;
-      chmod 600 /var/lib/pgadmin/storage/ralf.graefe_intel.com/pgpass;
-      chown pgadmin:pgadmin /var/lib/pgadmin/storage/ralf.graefe_intel.com/pgpass;
+      cp -f /pgadmin4/pgpass /var/lib/pgadmin/storage/ralf_mrghome.de/;
+      cp -f /pgadmin4/servers.json /var/lib/pgadmin/storage/ralf_mrghome.de/;
+      chmod 600 /var/lib/pgadmin/storage/ralf_mrghome.de/pgpass;
+      chown pgadmin:pgadmin /var/lib/pgadmin/storage/ralf_mrghome.de/pgpass;
       /entrypoint.sh
       "
     volumes:
@@ -29,6 +29,15 @@ services:
        - ./pgadmin/config/pgpass:/pgadmin4/pgpass
     ports:
     - 8484:80
+  
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - 127.0.0.1:11434:11434
+    volumes:
+      - ollama_data:/root/.ollama
 
 volumes:
   db_data:
+  ollama_data:

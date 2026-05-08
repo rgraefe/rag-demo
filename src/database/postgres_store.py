@@ -29,34 +29,34 @@ class PostgresStore():
     def set_embedding_dimension(self, embedding_dim:int):
         self.embedding_dim = embedding_dim
         
-    def get_vector_store(self, table_name:str):
+    def get_vector_store(self, table_name:str) -> PGVectorStore:
         return PGVectorStore.from_params(
             database=self.db_name,
             host=self.url.host,
             password=self.url.password,
-            port=self.url.port,
+            port=str(self.url.port) if self.url.port else None,
             user=self.url.username,
             table_name=table_name,
             embed_dim=self.embedding_dim, #31.05.2024
         )
         
-    def get_doc_store(self, table_name:str):
+    def get_doc_store(self, table_name: str) -> PostgresDocumentStore:
         return PostgresDocumentStore.from_params(
             database=self.db_name,
             host=self.url.host,
             password=self.url.password,
-            port=self.url.port,
+            port=str(self.url.port) if self.url.port else None,
             user=self.url.username,
             table_name=table_name,
-            namespace="document_store"
+            namespace="document_store",
         )
         
-    def get_cache_store(self, table_name:str):
+    def get_cache_store(self, table_name:str) -> PostgresKVStore:
         return PostgresKVStore.from_params(
             database=self.db_name,
             host=self.url.host,
             password=self.url.password,
-            port=self.url.port,
+            port=str(self.url.port) if self.url.port else None,
             user=self.url.username,
             table_name=table_name
         )

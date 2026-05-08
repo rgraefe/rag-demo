@@ -2,8 +2,8 @@ from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 import logging
 import pandas as pd
-from ingres.markdown_parser import MyMarkdownElementNodeParser
-from ingres.util import clean_html_tables
+from src.ingres.markdown_parser import MyMarkdownElementNodeParser
+from src.ingres.util import clean_html_tables
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ class ExcelReader(BaseReader):
     #     return documents
     
     #alternative using pandas
-    def load_data(self, file_path: str, extra_info: dict = None):
+    def load_data(self, file_path: str, extra_info: dict = {}):
         # Load the Excel file
         excel_file = file_path
         metadata = extra_info or {}

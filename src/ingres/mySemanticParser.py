@@ -10,7 +10,7 @@ from llama_index.core.node_parser.node_utils import (
 from llama_index.core.node_parser.text.utils import split_by_sentence_tokenizer
 from llama_index.core.schema import BaseNode, Document, TextNode, IndexNode
 from llama_index.core import Settings
-from utils import document_to_node
+from src.utils import document_to_node
 from llama_index.core.bridge.pydantic import Field
 
 DEFAULT_OG_TEXT_METADATA_KEY = "original_text"
@@ -18,8 +18,13 @@ DEFAULT_OG_TEXT_METADATA_KEY = "original_text"
 class MySemanticNodeParser(SemanticSplitterNodeParser):
     
     exclude_metadata_tags: List[str] = Field(
-        default=None,
-        description="Function to generate node IDs.",
+        default=[],
+        description="Metadata tags to exclude from splitting.",
+    )
+    
+    original_text_metadata_key: str = Field(
+        default=DEFAULT_OG_TEXT_METADATA_KEY,
+        description="Key for original text metadata.",
     )
     
     @classmethod
@@ -58,6 +63,10 @@ class MySemanticNodeParser(SemanticSplitterNodeParser):
 
         id_func = id_func or default_id_func
 
+        breakpoint_percentile_threshold = breakpoint_percentile_threshold or 95
+        buffer_size = buffer_size or 1
+        exclude_metadata_tags = exclude_metadata_tags or []
+
         return cls(
             embed_model=embed_model,
             breakpoint_percentile_threshold=breakpoint_percentile_threshold,
@@ -75,7 +84,7 @@ class MySemanticNodeParser(SemanticSplitterNodeParser):
 
     def build_semantic_nodes_from_documents(
         self,
-        documents: Sequence[TextNode],
+        documents: Sequence[Document],
         show_progress: bool = False,
     ) -> List[BaseNode]:
         """Build window nodes from documents."""
@@ -83,7 +92,7 @@ class MySemanticNodeParser(SemanticSplitterNodeParser):
         for doc in documents:
             # prevent splitting for some nodes e.g. tables
             if isinstance(doc, IndexNode):
-                all_nodes.extend(doc)
+                all_nodes.append(doc)
                 continue
             if self.exclude_metadata_tags:
                 for tag in self.exclude_metadata_tags:
@@ -91,7 +100,7 @@ class MySemanticNodeParser(SemanticSplitterNodeParser):
                     if tag in metadata.keys():
                         if isinstance(doc, Document):
                             doc = document_to_node(doc)
-                        all_nodes.extend(doc)
+                        all_nodes.append(doc)
                         continue
             text = doc.text
             text_splits = self.sentence_splitter(text)

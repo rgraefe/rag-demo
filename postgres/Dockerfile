@@ -1,24 +1,27 @@
-# Use a specific version of the Postgres image
-FROM postgres:13
+FROM postgres:16
 
-# Install necessary packages and set up locale
+ARG PGVECTOR_VERSION=0.8.2
+
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y wget build-essential postgresql-server-dev-13 locales && \
-    echo "LC_ALL=en_US.UTF-8" >> /etc/environment && \
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        ca-certificates \
+        build-essential \
+        postgresql-server-dev-16 \
+        locales && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for locale
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
-# Install pgvector
-RUN wget https://github.com/pgvector/pgvector/archive/v0.4.4.tar.gz && \
-    tar -xzvf v0.4.4.tar.gz && \
-    cd pgvector-0.4.4 && \
+RUN wget -q https://github.com/pgvector/pgvector/archive/refs/tags/v${PGVECTOR_VERSION}.tar.gz && \
+    tar -xzf v${PGVECTOR_VERSION}.tar.gz && \
+    cd pgvector-${PGVECTOR_VERSION} && \
     make && \
-    make install
+    make install && \
+    cd / && \
+    rm -rf pgvector-${PGVECTOR_VERSION} v${PGVECTOR_VERSION}.tar.gz
 
 COPY ./init.sql /docker-entrypoint-initdb.d/

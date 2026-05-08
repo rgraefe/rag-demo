@@ -1,14 +1,14 @@
 import logging
 import os
 import datetime
-from typing import List
+from typing import List, Dict, Any
 from collections import defaultdict
-from utils.tools import create_uuid_from_string
+from src.utils.tools import create_uuid_from_string
 
 from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 from pathlib import Path
-from ingres.markdown_parser import MyMarkdownElementNodeParser
+from src.ingres.markdown_parser import MyMarkdownElementNodeParser
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class MarkDownSectionWalker(BaseReader):
     def load_data(
         self,
         start_file: Path,
-        extra_info: dict = None,
+        extra_info: dict = {},
     ) -> List[Document]:
         """
         Load markdown data starting with the given file and following links to section documents. 
@@ -49,7 +49,7 @@ class MarkDownSectionWalker(BaseReader):
             documents = []
             metadata = {}
             file_content = self.read_markdown_file(start_file)
-            sections = self.process_file(filename=start_file, file=file_content)
+            sections = self.process_file(filename=str(start_file), file=file_content)
             if extra_info:
                 metadata = extra_info
             for section in list(sections.values()):
@@ -123,12 +123,12 @@ class MarkDownSectionWalker(BaseReader):
         self,
         filename: str,
         file: str,
-        parent_id: str = None,
-        parent_section: str = None,
-        parent_subsection: str = None,
-        parent_subsubsection: str = None
+        parent_id: str = "",
+        parent_section: str = "",
+        parent_subsection: str = "",
+        parent_subsubsection: str = ""
         
-    ) -> List[Document]:
+    ) -> Dict[str, Dict[str, Any]]:
         """_summary_
 
         Args:
@@ -141,7 +141,7 @@ class MarkDownSectionWalker(BaseReader):
             the level is 3. Defaults to None.
 
         Returns:
-            List[Document]: List of Llamaindex Document objects with metadata
+            Dict[str, Dict[str, Any]]: Dictionary of section data where keys are section IDs and values are dictionaries containing section information
         """
         current_id = None
         dt_m, dt_c = self.get_file_times(filename)
@@ -150,7 +150,7 @@ class MarkDownSectionWalker(BaseReader):
         sections = defaultdict(dict)
         current_section = defaultdict(str)
         
-        current_section["text"]= []
+        current_section["text"]= ""
         current_section["filename"] = filename
         current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
         current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
@@ -159,15 +159,15 @@ class MarkDownSectionWalker(BaseReader):
         if parent_section:
             current_section["h1"] = parent_section
             current_section["id"] = "h1_" + parent_section
-            current_section["level"] = 1
+            current_section["level"] = "1"
         if parent_subsection:
             current_section["h2"] = parent_subsection
             current_section["id"] = "h2_" + parent_subsection
-            current_section["level"] = 2
+            current_section["level"] = "2"
         if parent_subsubsection:
             current_section["h3"] = parent_subsubsection
             current_section["id"] = "h3_" + parent_subsubsection
-            current_section["level"] = 3
+            current_section["level"] = "3"
         # if there was already a parent id add the string 'sub' to it
         # and overwrite all previously set ones
         if parent_id:
@@ -188,7 +188,7 @@ class MarkDownSectionWalker(BaseReader):
                     current_section["h2"] = parent_subsection
                 if parent_subsubsection:
                     current_section["h3"] = parent_subsubsection
-                current_section["text"]= []
+                current_section["text"]= ""
                 current_section["filename"] = filename
                 current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
                 current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
@@ -203,8 +203,8 @@ class MarkDownSectionWalker(BaseReader):
                     parent_subsection = current_section_header
                     current_section["h3"] = ""
                 current_section["id"] = "{}_{}".format(lvl,current_section_header)
-                current_section["level"] = header_level
-                current_section["text"].append(line.strip('#').strip())
+                current_section["level"] = str(header_level)
+                current_section["text"] += line.strip('#').strip()
                 current_id = current_section["id"]
                 sections[current_section["id"]] = current_section.copy()
             elif line.startswith("[!"): #link to another file
@@ -218,7 +218,7 @@ class MarkDownSectionWalker(BaseReader):
                     new_sections = self.process_file(
                         filename=file_name, 
                         file=file_content,
-                        parent_id=current_id,
+                        parent_id=str(current_id),
                         parent_section=current_section["h1"],
                         parent_subsection=current_section["h2"],
                         parent_subsubsection=current_section["h3"])

@@ -15,10 +15,10 @@ from llama_index.core.schema import Document, TextNode, NodeRelationship
 import sys
 import fsspec
 from fsspec.implementations.local import LocalFileSystem
-from typing import Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Type
 from pathlib import Path, PurePosixPath
-from utils import FileCache
-from utils.tools import document_to_node
+from src.utils import FileCache
+from src.utils.tools import document_to_node
 import logging
 
 log = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ def _try_loading_included_file_formats() -> Dict[str, Type[BaseReader]]:
             PptxReader,
             VideoAudioReader,
         )  # pants: no-infer-dep
-        from ingres import MarkDownSectionWalker, ExcelReader, PptxSlideReader, VisioReader, DocxSectionReader, PDFMarkdownReader
+        from src.ingres import MarkDownSectionWalker, ExcelReader, PptxSlideReader, VisioReader, DocxSectionReader, PDFMarkdownReader
     except ImportError:
         raise ImportError("`llama-index-readers-file` package not found")
 
@@ -87,15 +87,18 @@ def _try_loading_included_file_formats() -> Dict[str, Type[BaseReader]]:
     return default_file_reader_cls
 
 
-def _format_file_timestamp(timestamp: float) -> Optional[str]:
+def _format_file_timestamp(timestamp: Optional[float]) -> Optional[str]:
     """Format file timestamp to a %Y-%m-%d string.
 
     Args:
-        timestamp (float): timestamp in float
+        timestamp (Optional[float]): timestamp in float or None
 
     Returns:
-        str: formatted timestamp
+        Optional[str]: formatted timestamp or None if invalid
     """
+    if timestamp is None:
+        return None
+
     try:
         return datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")
     except Exception:
@@ -193,7 +196,7 @@ class ReaderFactory(SimpleDirectoryReader):
         file_metadata: Optional[Callable[[str], Dict]] = None,
         raise_on_error: bool = False,
         fs: Optional[fsspec.AbstractFileSystem] = None,
-        tree_root_glob: Optional[List] = None,
+        tree_root_glob: Optional[List[str]] = None,
         cached_documents: bool = False
     ) -> None:
         """Initialize the ReaderFactory with configuration parameters.
@@ -223,20 +226,21 @@ class ReaderFactory(SimpleDirectoryReader):
         self.tree_root_glob= tree_root_glob
         self.cached_documents = cached_documents
         super(ReaderFactory, self).__init__(
-            input_dir,
-            input_files,
-            exclude,
-            exclude_hidden,
-            errors,
-            recursive,
-            encoding,
-            filename_as_id,
-            required_exts,
-            file_extractor,
-            num_files_limit,
-            file_metadata,
-            raise_on_error,
-            fs)
+            input_dir=input_dir,
+            input_files=input_files,
+            exclude=exclude,
+            exclude_hidden=exclude_hidden,
+            errors=errors,
+            recursive=recursive,
+            encoding=encoding,
+            filename_as_id=filename_as_id,
+            required_exts=required_exts,
+            file_extractor=file_extractor,
+            num_files_limit=num_files_limit,
+            file_metadata=file_metadata,
+            raise_on_error=raise_on_error,
+            fs=fs,
+        )
         
 
         
@@ -252,7 +256,7 @@ class ReaderFactory(SimpleDirectoryReader):
         path_obj = Path(path)
         return len(path_obj.parts)
     
-    def get_index_files(self, input_dir, tree_root_glob):
+    def get_index_files(self, input_dir, tree_root_glob) -> List[str]:
         """Find all files matching a glob pattern within a directory tree.
         
         Recursively searches the input directory for files matching the specified
@@ -274,7 +278,7 @@ class ReaderFactory(SimpleDirectoryReader):
                     index_files.append(os.path.join(root, filename))
         return index_files
 
-    def get_file_refs(self, input_dir, ending):
+    def get_file_refs(self, input_dir, ending) -> List[str]:
         """Find all files with a specific extension within a directory tree.
         
         Recursively searches the input directory for all files ending with the
@@ -294,7 +298,7 @@ class ReaderFactory(SimpleDirectoryReader):
                     file_refs.append(os.path.join(root, filename))
         return file_refs
             
-    def _add_files(self, input_dir: Path) -> List[Path]:
+    def _add_files(self, input_dir: Path | PurePosixPath) -> list[Path | PurePosixPath]:
         """Recursively discover and filter files from the input directory.
         
         This method scans the input directory and applies multiple filters:
@@ -305,10 +309,10 @@ class ReaderFactory(SimpleDirectoryReader):
         - Respects the num_files_limit if set
         
         Args:
-            input_dir (Path): The root directory to scan for files.
+            input_dir (Path | PurePosixPath): The root directory to scan for files.
             
         Returns:
-            List[Path]: A sorted list of file paths that passed all filters.
+            list[Path | PurePosixPath]: A sorted list of file paths that passed all filters.
             
         Raises:
             ValueError: If no files are found in the input directory after filtering.
@@ -316,15 +320,9 @@ class ReaderFactory(SimpleDirectoryReader):
         all_files = set()
         rejected_files = set()
         rejected_dirs = set()
-        tree_root_types = set()
         # Default to POSIX paths for non-default file systems (e.g. S3)
         _Path = Path if is_default_fs(self.fs) else PurePosixPath
         
-        if self.tree_root_glob:
-            for root in self.tree_root_glob:
-                splits = root.split('.')
-                tree_root_types.add(splits[-1])
-
         if self.exclude is not None:
             for excluded_pattern in self.exclude:
                 if self.recursive:
@@ -334,33 +332,30 @@ class ReaderFactory(SimpleDirectoryReader):
                     # Non-recursive glob
                     excluded_glob = _Path(input_dir) / excluded_pattern
                 for file in self.fs.glob(str(excluded_glob)):
-                    if self.fs.isdir(file):
-                        rejected_dirs.add(_Path(file))
+                    file_path = str(file)
+                    if self.fs.isdir(file_path):
+                        rejected_dirs.add(_Path(file_path))
                     else:
-                        rejected_files.add(_Path(file))
+                        rejected_files.add(_Path(file_path))
         
         # remove files that belong to a hierarchy of files but are not the root file, like with .md
-        for i,ending in enumerate(tree_root_types):
-            
-            # if self.recursive:
-            #     index_files = self.fs.glob(os.path.join(str(input_dir),"**","{}".format(self.tree_root_glob[i])))
-            #     file_refs = self.fs.glob(os.path.join(str(input_dir), "**","*.{}".format(ending)))
-            # else:
-            #     index_files = self.fs.glob(os.path.join(str(input_dir), "{}".format(self.tree_root_glob[i])))
-            #     file_refs = self.fs.glob(os.path.join(str(input_dir), "*.{}".format(ending)))
-            index_files = self.get_index_files(input_dir, self.tree_root_glob[i])
-            file_refs = self.get_file_refs(input_dir, ending)
-            logging.debug(f"Index files for pattern {self.tree_root_glob[i]}: {index_files}")
-            logging.debug(f"File refs for ending {ending}: {file_refs}")
-            excluded_glob = [f for f in file_refs if f not in index_files]
-            logging.debug(f"Excluded files: {excluded_glob}")
-            for file in excluded_glob:
-                    if self.fs.isdir(file):
-                        rejected_dirs.add(_Path(file))
-                    else:
-                        rejected_files.add(_Path(file))
+        if self.tree_root_glob:
+            for tree_root_pattern in self.tree_root_glob:
+                ending = tree_root_pattern.split('.')[-1]
+                index_files = self.get_index_files(input_dir, tree_root_pattern)
+                file_refs = self.get_file_refs(input_dir, ending)
+                logging.debug(f"Index files for pattern {tree_root_pattern}: {index_files}")
+                logging.debug(f"File refs for ending {ending}: {file_refs}")
+                excluded_glob = [f for f in file_refs if f not in index_files]
+                logging.debug(f"Excluded files: {excluded_glob}")
+                for file in excluded_glob:
+                        file_path = str(file)
+                        if self.fs.isdir(file_path):
+                            rejected_dirs.add(_Path(file_path))
+                        else:
+                            rejected_files.add(_Path(file_path))
 
-        file_refs: List[str] = []
+        file_refs = []
         if self.recursive:
             file_refs = self.fs.glob(os.path.join(str(input_dir), "**","*"))
             # Sort paths by their depth
@@ -371,7 +366,7 @@ class ReaderFactory(SimpleDirectoryReader):
         for ref in file_refs:
             # Manually check if file is hidden or directory instead of
             # in glob for backwards compatibility.
-            ref = _Path(ref)
+            ref = _Path(str(ref))
             is_dir = self.fs.isdir(ref)
             skip_because_hidden = self.exclude_hidden and self.is_hidden(ref)
             skip_because_bad_ext = (
@@ -422,7 +417,7 @@ class ReaderFactory(SimpleDirectoryReader):
 
         return new_input_files
     
-    def extract_start_dir(self, document: Document, root_dir: Path):
+    def extract_start_dir(self, document: Document, root_dir: Path | PurePosixPath) -> None:
         """Extract and add the top-level directory name to document metadata.
         
         For a document loaded from a nested directory structure, this method
@@ -445,7 +440,7 @@ class ReaderFactory(SimpleDirectoryReader):
         
     @staticmethod
     def load_file(
-        input_file: Path,
+        input_file: Path | PurePosixPath,
         file_metadata: Callable[[str], Dict],
         file_extractor: Dict[str, BaseReader],
         filename_as_id: bool = False,
@@ -506,7 +501,9 @@ class ReaderFactory(SimpleDirectoryReader):
 
             # load data -- catch all errors except for ImportError
             try:
-                kwargs = {"extra_info": metadata}
+                kwargs: dict[str, Any] = {
+                    "extra_info": metadata
+                }
                 if fs and not is_default_fs(fs):
                     kwargs["fs"] = fs
                 docs = reader.load_data(input_file, **kwargs)
@@ -536,7 +533,7 @@ class ReaderFactory(SimpleDirectoryReader):
             # do standard read
             fs = fs or get_default_fs()
             with fs.open(input_file, errors=errors, encoding=encoding) as f:
-                data = f.read().decode(encoding, errors=errors)
+                data = f.read()
 
             doc = Document(text=data, metadata=metadata or {})
             if filename_as_id:
@@ -546,75 +543,78 @@ class ReaderFactory(SimpleDirectoryReader):
 
         return documents
 
-    async def aload_file(self, input_file: Path) -> List[Document]:
-        """Asynchronously load a single file and convert it to documents.
-        
-        This is the async counterpart to load_file(). It uses the appropriate
-        file reader based on the file extension and handles errors gracefully.
-        If raise_on_error is False, failed files are skipped with an error message.
-        
-        Args:
-            input_file (Path): The file path to load.
-            
-        Returns:
-            List[Document]: A list of Document objects extracted from the file.
-                Returns an empty list if the file fails to load and raise_on_error is False.
-        """
-        # TODO: make this less redundant
+    @staticmethod
+    async def aload_file(
+        input_file: Path | PurePosixPath,
+        file_metadata: Optional[Callable[[str], dict]],
+        file_extractor: dict[str, BaseReader],
+        filename_as_id: bool = False,
+        encoding: str = "utf-8",
+        errors: str = "ignore",
+        raise_on_error: bool = False,
+        fs: fsspec.AbstractFileSystem | None = None,
+    ) -> list[Document]:
+
         default_file_reader_cls = ReaderFactory.supported_suffix_fn()
         default_file_reader_suffix = list(default_file_reader_cls.keys())
-        metadata: Optional[dict] = None
-        documents: List[Document] = []
 
-        if self.file_metadata is not None:
-            metadata = self.file_metadata(str(input_file))
+        metadata: dict | None = None
+        documents: list[Document] = []
+
+        if file_metadata is not None:
+            metadata = file_metadata(str(input_file))
 
         file_suffix = input_file.suffix.lower()
-        if (
-            file_suffix in default_file_reader_suffix
-            or file_suffix in self.file_extractor
-        ):
-            # use file readers
-            if file_suffix not in self.file_extractor:
-                # instantiate file reader if not already
-                reader_cls = default_file_reader_cls[file_suffix]
-                self.file_extractor[file_suffix] = reader_cls()
-            reader = self.file_extractor[file_suffix]
 
-            # load data -- catch all errors except for ImportError
+        if file_suffix in default_file_reader_suffix or file_suffix in file_extractor:
+            if file_suffix not in file_extractor:
+                reader_cls = default_file_reader_cls[file_suffix]
+                file_extractor[file_suffix] = reader_cls()
+
+            reader = file_extractor[file_suffix]
+
             try:
-                kwargs = {"extra_info": metadata}
-                if self.fs and not is_default_fs(self.fs):
-                    kwargs["fs"] = self.fs
+                kwargs: dict[str, Any] = {"extra_info": metadata}
+
+                if fs and not is_default_fs(fs):
+                    kwargs["fs"] = fs
+
                 docs = await reader.aload_data(input_file, **kwargs)
+
             except ImportError as e:
-                # ensure that ImportError is raised so user knows
-                # about missing dependencies
                 raise ImportError(str(e))
+
             except Exception as e:
-                if self.raise_on_error:
+                if raise_on_error:
                     raise
-                # otherwise, just skip the file and report the error
+
                 print(
                     f"Failed to load file {input_file} with error: {e}. Skipping...",
                     flush=True,
                 )
                 return []
 
-            # iterate over docs if needed
-            if self.filename_as_id:
+            if filename_as_id:
                 for i, doc in enumerate(docs):
                     doc.id_ = f"{input_file!s}_part_{i}"
 
             documents.extend(docs)
+
         else:
-            # do standard read
-            fs = self.fs or get_default_fs()
-            with fs.open(input_file, errors=self.errors, encoding=self.encoding) as f:
-                data = f.read().decode(self.encoding, errors=self.errors)
+            active_fs = fs or get_default_fs()
+
+            # Since encoding is passed, f.read() normally returns str in newer fsspec.
+            with active_fs.open(input_file, errors=errors, encoding=encoding) as f:
+                raw_data = f.read()
+
+            if isinstance(raw_data, bytes):
+                data = raw_data.decode(encoding, errors=errors)
+            else:
+                data = raw_data
 
             doc = Document(text=data, metadata=metadata or {})
-            if self.filename_as_id:
+
+            if filename_as_id:
                 doc.id_ = str(input_file)
 
             documents.append(doc)
@@ -622,28 +622,33 @@ class ReaderFactory(SimpleDirectoryReader):
         return documents
     
     def metadata_to_str(self, doc: TextNode):
-        """Convert Path objects in metadata to strings for serialization.
-        
-        This method recursively converts any Path objects found in a TextNode's
-        metadata (and related nodes' metadata) to string representations. This is
-        necessary for proper JSON serialization and storage of documents that may
-        contain Path objects.
-        
-        Args:
-            doc (TextNode): The TextNode to process. Metadata in this node and
-                any SOURCE relationship nodes will be updated in-place.
-        """
-        metadata = doc.metadata
-        child_path = metadata.get("child_path", None)
-        if child_path and isinstance(child_path, Path):
-            doc.metadata["child_path"] = str(child_path)
-        if doc.relationships:
-            rel = doc.relationships.get(NodeRelationship.SOURCE, None)
-            if rel:
-                rel_metadata = doc.relationships[NodeRelationship.SOURCE].metadata
-                child_path = rel_metadata.get("child_path", None)
-                if child_path and isinstance(child_path, Path):
-                    doc.relationships[NodeRelationship.SOURCE].metadata["child_path"] = str(child_path)
+        metadata = doc.metadata or {}
+
+        child_path = metadata.get("child_path")
+        if isinstance(child_path, Path):
+            metadata["child_path"] = str(child_path)
+
+        rel = doc.relationships.get(NodeRelationship.SOURCE) if doc.relationships else None
+
+        if rel is None:
+            return
+
+        # SOURCE sollte normalerweise ein einzelnes RelatedNodeInfo sein,
+        # aber andere Beziehungen können Listen sein.
+        if isinstance(rel, list):
+            rels = rel
+        else:
+            rels = [rel]
+
+        for r in rels:
+            rel_metadata = getattr(r, "metadata", None)
+
+            if not isinstance(rel_metadata, dict):
+                continue
+
+            child_path = rel_metadata.get("child_path")
+            if isinstance(child_path, Path):
+                rel_metadata["child_path"] = str(child_path)
             
     
         
@@ -708,7 +713,7 @@ class ReaderFactory(SimpleDirectoryReader):
                 # to happen on windows
                 for input_file in tqdm(files_to_process,"processing all files"):
                     #if ".xlsx" == input_file.suffix or ".xls" == input_file.suffix or ".xlsm" == input_file.suffix:
-                    if not cache.is_file_in_cache(input_file):
+                    if not cache.is_file_in_cache(str(input_file)):
                         print("processing {}". format(input_file))
                         docs = self.load_file(
                                 input_file=input_file,
@@ -750,10 +755,10 @@ class ReaderFactory(SimpleDirectoryReader):
         Returns:
             List[Document]: A list of documents.
         """
-        documents = super(ReaderFactory,self).aload_data(
-            show_progress,
-            num_workers,
-            fs
+        documents = await super(ReaderFactory, self).aload_data(
+            show_progress=show_progress,
+            num_workers=num_workers,
+            fs=fs,
         )
         
         for document in documents:

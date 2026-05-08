@@ -10,7 +10,7 @@ from .pymupdf_rag import pdf_to_markdown
 from .pdf_markdown import PDFMarkdownReader
 from .markdown_parser import MyMarkdownNodeParser
 from .util import md_from_doc, html_to_md_table, clean_tables, clean_html_tables, remove_watermark
-from. mySemanticParser import MySemanticNodeParser
+from.mySemanticParser import MySemanticNodeParser
 
 __all__ = ['MarkDownSectionWalker', 'ReaderFactory', 'PptxSlideReader', 'ExcelReader', 'VisioReader', 
            'DocxSectionReader','MyIngestionPipeline', 'MyIngestionCache', 'pdf_to_markdown',

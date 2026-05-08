@@ -2,16 +2,16 @@ import os
 from llama_index.core.readers.base import BaseReader
 import logging
 from pathlib import Path
-from llama_index.core.schema import Document
-from docx import Document as docx
+from llama_index.core.schema import Document, TextNode
+from docx.document import Document as DocxDocument    
 import re
 from collections import defaultdict
 import datetime
-from utils.tools import create_uuid_from_string
+from src.utils.tools import create_uuid_from_string
 from typing import List
 from bs4 import BeautifulSoup
-from ingres.markdown_parser import MyMarkdownNodeParser, MyMarkdownElementNodeParser
-from ingres.util import clean_tables, md_from_doc
+from src.ingres.markdown_parser import MyMarkdownNodeParser, MyMarkdownElementNodeParser
+from src.ingres.util import clean_tables, md_from_doc
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class DocxSectionReader(BaseReader):
     def load_data(
         self,
         file: Path,
-        extra_info: dict = None,
+        extra_info: dict = {},
     ) -> List[Document]:
         """
         Load markdown data starting with the given file and following links to section documents. 
@@ -46,10 +46,9 @@ class DocxSectionReader(BaseReader):
         """
         if os.path.exists(file):
             # documents = []
-            # doc = docx(file)
+            # doc = Document(file)
             # sections, tables = self.process_file(filename=file, doc=doc)
-            if extra_info:
-                metadata = extra_info or {}
+            metadata = extra_info
             # for section in list(sections.values()):
             #     if metadata:
             #         metadata["level"] = section["level"]
@@ -88,7 +87,8 @@ class DocxSectionReader(BaseReader):
             md_parser = MyMarkdownElementNodeParser.from_defaults()
             nodes = []
             for doc in docs:
-                nodes.extend(md_parser.get_nodes_from_node(doc))
+                if isinstance(doc, TextNode):
+                    nodes.extend(md_parser.get_nodes_from_node(doc))
             return nodes
             #return documents
         else:
@@ -110,13 +110,13 @@ class DocxSectionReader(BaseReader):
     def process_file(
         self,
         filename: str,
-        doc: docx        
-    ) -> List[Document]:
+        doc: DocxDocument,        
+    ) -> list:
         """_summary_
 
         Args:
             filename (str): absolute path to file
-            file (str): content of a markdown file
+            doc (DocxDocument): content of a Word document
             parent_section (str, optional): if the parent document contained a section title it is given here. Defaults to None.
             parent_subsection (str, optional): if the parent document contained a subsection title it is given here. Defaults to None.
             parent_subsubsection (str, optional): if the parent document contained a subsubsection title it is given here. Defaults to None.
@@ -134,7 +134,7 @@ class DocxSectionReader(BaseReader):
         file_path = os.path.dirname(filename)
         sections = defaultdict(dict)
         current_section = defaultdict(str)
-        current_section["text"]= []
+        current_section["text"]= ""
         current_section["filename"] = filename
         current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
         current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
@@ -150,10 +150,11 @@ class DocxSectionReader(BaseReader):
                 if len(text) > 0 and re.search(r'^.*[\d\w\W]+.*$',text):
                     p_text += el.text.strip()
                 #print(repr("Element Text: {}".format(el.text.replace("\n", ""))))
-            regex = re.compile(r'^Heading ([0-9].*$)')
-            if regex.match(para.style.name):
+            style_name = (para.style.name or "") if para.style else ""
+            match = re.match(r'^Heading ([0-9]+)', style_name)
+            if match:
                 p_text = re.sub(r'\n+', '', p_text)
-                header_level = int(regex.findall(para.style.name)[0])
+                header_level = int(match.group(1))
         
                 lvl = "h{}".format(header_level)
                 current_section = defaultdict(str)
@@ -161,7 +162,7 @@ class DocxSectionReader(BaseReader):
                     current_section["h1"] = parent_section
                 if parent_subsection:
                     current_section["h2"] = parent_subsection
-                current_section["text"]= []
+                current_section["text"]= ""
                 current_section["filename"] = filename
                 current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
                 current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
@@ -176,8 +177,8 @@ class DocxSectionReader(BaseReader):
                     parent_subsection = current_section_header
                     current_section["h3"] = ""
                 current_section["id"] = "{}_{}".format(lvl,current_section_header)
-                current_section["level"] = header_level
-                current_section["text"].append(p_text.strip())
+                current_section["level"] = str(header_level)
+                current_section["text"] += p_text.strip()
                 current_id = current_section["id"]
                 sections[current_section["id"]] = current_section.copy()
              
@@ -189,12 +190,12 @@ class DocxSectionReader(BaseReader):
                         if endswithnewline:
                             p_text = p_text + '\n'
                         p_text = re.sub(r'\s+', ' ', p_text).strip()
-                        sections[current_id]["text"].append(p_text)
+                        sections[current_id]["text"] += p_text
                 else:
                     current_id = "Cover"
                     lvl = "h0"
                     current_section = defaultdict(str)
-                    current_section["text"]= []
+                    current_section["text"]= ""
                     current_section["filename"] = str(filename)
                     current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
                     current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
@@ -202,13 +203,13 @@ class DocxSectionReader(BaseReader):
                     current_section_header = "Cover"
                     current_section[lvl] = current_section_header
                     current_section["id"] = "{}_{}".format(lvl,current_section_header)
-                    current_section["level"] = 0
+                    current_section["level"] = "0"
                     if len(p_text) > 0:
                         p_text = re.sub(r'\n+', '\n', p_text)
                         p_text = re.sub(r'\s+', ' ', p_text).strip()
-                        sections[current_id]["text"].append(p_text)
+                        sections[current_id]["text"] += p_text
                     current_id = current_section["id"]
                     sections[current_section["id"]] = current_section.copy()
               
-        return sections
+        return list(sections)
         

@@ -33,7 +33,7 @@ class MyMarkdownNodeParser(MarkdownNodeParser):
     
 class MyMarkdownElementNodeParser(MarkdownElementNodeParser):
     
-    def md_to_df(self, md_str: str) -> pd.DataFrame:
+    def md_to_df(self, md_str: str) -> pd.DataFrame | None:
         """Convert Markdown to dataframe."""
         # Replace " by "" in md_str
         md_str = md_str.replace('"', '""')

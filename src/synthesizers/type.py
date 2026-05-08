@@ -1,6 +1,7 @@
 from llama_index.core.response_synthesizers.type import ResponseMode
+from enum import Enum
 
-class CiteResponseMode():
+class CiteResponseMode(str, Enum):
     # add citation versions for each of the default response modes
     CITE_REFINE = "cite_refine"
     """
