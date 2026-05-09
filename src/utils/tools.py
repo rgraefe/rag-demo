@@ -1,7 +1,7 @@
 import uuid
 import hashlib
 from IPython.display import Markdown, display
-from llama_index.core.schema import Document, TextNode
+from llama_index.core.schema import BaseNode, Document, TextNode
 
 def create_uuid_from_string(val: str):
     hex_string = hashlib.md5(val.encode("UTF-8")).hexdigest()
@@ -23,9 +23,17 @@ def document_to_node(doc: Document):
                     excluded_embed_metadata_keys=doc.excluded_embed_metadata_keys,
                     relationships=doc.relationships,
                     text = doc.text,
-                    start_char_idx=doc.start_char_idx,
-                    end_char_idx=doc.end_char_idx,
                     text_template=doc.text_template,
                     metadata_template=doc.metadata_template,
-                    metadata_seperator=doc.metadata_seperator)
+                    metadata_separator=doc.metadata_separator)
     return node
+
+def node_to_document(node: BaseNode) -> Document:
+    if isinstance(node, Document):
+        return node
+
+    return Document(
+        text=node.get_content(),
+        metadata=dict(node.metadata or {}),
+        id_=node.node_id,
+    )

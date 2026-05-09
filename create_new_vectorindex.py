@@ -9,9 +9,9 @@ import logging
 import sys
 import argparse
 sys.path.append('../')
-from ingres import ReaderFactory, MyIngestionPipeline, MyIngestionCache, MySemanticNodeParser
-from models import Modeltypes, ModelFactory
-from database import PostgresStore
+from src.ingres import ReaderFactory, MyIngestionPipeline, MyIngestionCache, MySemanticNodeParser
+from src.models import Modeltypes, ModelFactory
+from src.database import PostgresStore
 from llama_index.core.retrievers import RecursiveRetriever
 from llama_index.core.node_parser import SentenceWindowNodeParser, SentenceSplitter, SemanticSplitterNodeParser
 from llama_index.core.ingestion import (
@@ -20,7 +20,7 @@ from llama_index.core.ingestion import (
 )
 from tqdm import tqdm
 import json
-from preprocessing.preprocessing import TextCleaner1st
+from src.preprocessing.preprocessing import TextCleaner1st
 
 # logging.config.fileConfig('/home/rgraefe/git/rag_chat/log.conf')
 logging.basicConfig(stream=sys.stdout, level=logging.ERROR)
@@ -81,10 +81,16 @@ def read_documents(args):
 sum_path = args.sum_path
 cached_documents = args.cached_documents
 
-chatllm = ModelFactory.getLlmModel(modeltype=Modeltypes.AZURE)
+chatllm = ModelFactory.getLlmModel(modeltype=Modeltypes.OPENAI)
 sumllm = ModelFactory.getLlmModel(modeltype=Modeltypes.OLLAMA)
 #sumllm = chatllm
 embed_model = ModelFactory.getEmbedModel(modeltype=Modeltypes.NOMIC)
+
+if embed_model is None:
+    raise ValueError("Could not create embedding model")
+
+if sumllm is None:
+    raise ValueError("Could not create sum model")
 
 Settings.embed_model = embed_model
 Settings.llm = sumllm
@@ -161,24 +167,7 @@ batch_size = 32
 num_batches = len(docs) // batch_size
 remainder = len(docs) % batch_size
 
-# async def process_batches():
-#     # Process batches
-#     for i in range(num_batches):
-#         batch = docs[i * batch_size: (i + 1) * batch_size]
-#         print("Processing batch: {} of {}".format(i+1, num_batches))
-#         window_nodes = await window_pipeline.arun(documents=batch,show_progress=True)
-#         sentence_nodes = await sentence_pipeline.arun(documents=batch,show_progress=True)
 
-#     # Process remaining elements
-#     if remainder > 0:
-#         remaining_batch = docs[num_batches * batch_size:]
-#         print("Processing batch: {} of {}".format(i+1, num_batches))
-#         window_nodes = window_pipeline.arun(documents=batch,show_progress=True)
-#         sentence_nodes = sentence_pipeline.arun(documents=batch,show_progress=True)
-
-# asyncio.run(process_batches())
-
-
-indexed_nodes = indexed_pipeline.run(documents=docs,show_progress=True, batchsize=batch_size)
+indexed_nodes = indexed_pipeline.run(nodes=docs,show_progress=True, batchsize=batch_size)
 #sentence_nodes = sentence_pipeline.run(documents=docs,show_progress=True, batchsize=batch_size)
 

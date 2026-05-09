@@ -7,14 +7,14 @@ Contains parsers for docx, pdf files.
 import os
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 from tenacity import retry, stop_after_attempt
 
 from fsspec import AbstractFileSystem
 
 from llama_index.core.readers.base import BaseReader
-from llama_index.core.schema import Document, BaseNode
+from llama_index.core.schema import Document, BaseNode, TextNode
 from src.ingres.util import md_from_doc, clean_tables
 import pymupdf as fitz
 
@@ -93,24 +93,25 @@ class PDFMarkdownReader(BaseReader):
         file: Path,
         extra_info: Optional[Dict] = None,
         fs: Optional[AbstractFileSystem] = None,
-    ) -> List[BaseNode]:
-        """Parse file."""
+    ) -> List[Document]:
+        """Parse file into a sequence of nodes using hierarchical markdown parsing."""
 
-        docs = []
-        #parser = LangchainNodeParser(MarkdownHeaderTextSplitter(headers_to_split_on=headers_to_split_on))
-        parser = MyMarkdownNodeParser.from_defaults(include_metadata=True,
-                                                  include_prev_next_rel=True)
-        metadata = {"file_name": file.name}
+        parser = MyMarkdownNodeParser.from_defaults(
+            include_metadata=True,
+            include_prev_next_rel=True,
+        )
+        metadata: Dict = {"file_name": file.name}
         if extra_info is not None:
             metadata.update(extra_info)
 
+        md_docs: str = ""
         doc_path = self.doc_from_pdf(file=file)
-        md_docs = ""
-        md_path = None
+
         if doc_path is not None:
+            md_path: Optional[Path] = None
             try:
                 md_path = md_from_doc(file=doc_path)
-                md_docs = clean_tables(md_path)
+                md_docs = clean_tables(md_path) or ""
             finally:
                 try:
                     os.remove(doc_path)
@@ -124,13 +125,26 @@ class PDFMarkdownReader(BaseReader):
         else:
             md_docs = self.extract_text_from_pdf(file)
 
-        d = [Document(text=md_docs, metadata=metadata)]
-        docs = parser.get_nodes_from_documents(d)
         md_parser = MyMarkdownElementNodeParser.from_defaults()
-        nodes: List[BaseNode] = []
-        for doc in docs:
-            nodes.extend(md_parser.get_nodes_from_node(doc))
 
-        return nodes
+        documents: list[Document] = []
+
+        for node in parser.get_nodes_from_documents(
+            [Document(text=md_docs, metadata=metadata)]
+        ):
+            if isinstance(node, TextNode):
+
+                split_nodes = md_parser.get_nodes_from_node(node)
+
+                for split_node in split_nodes:
+                    documents.append(
+                        Document(
+                            text=split_node.get_content(),
+                            metadata=dict(split_node.metadata or {}),
+                            id_=split_node.node_id,
+                        )
+                    )
+
+        return documents
 
 
