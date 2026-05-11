@@ -1,0 +1,10 @@
+{
+  "family_id": "EU_REGULATION",
+  "heading_rules": [
+    {
+      "pattern": "^Article\\s+\\d+",
+      "level": 2,
+      "strip_match": false
+    }
+  ]
+}

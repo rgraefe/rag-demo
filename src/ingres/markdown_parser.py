@@ -4,6 +4,7 @@ from typing import Any, Callable, List, Optional
 from io import StringIO
 import csv
 import pandas as pd
+from heading_rules import HeadingRule
 from llama_index.core.node_parser.relational.base_element import (
     BaseElementNodeParser,
     Element,
@@ -32,6 +33,29 @@ class MyMarkdownNodeParser(MarkdownNodeParser):
         return updated_headers
     
 class MyMarkdownElementNodeParser(MarkdownElementNodeParser):
+    
+    def __init__(
+        self,
+        *args: Any,
+        heading_rules: Optional[List[HeadingRule]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(*args, **kwargs)
+        self.heading_rules: List[HeadingRule] = heading_rules or []
+        
+    def _apply_heading_rules(self, line: str) -> Optional[tuple[int, str]]:
+        """
+        Check line against all heading rules.
+        Returns (level, cleaned_text) if a rule matches, else None.
+        Only applied to lines that do not already start with '#'.
+        """
+        if line.startswith("#"):
+            return None
+        for rule in self.heading_rules:
+            if rule.pattern.match(line):
+                text = rule.pattern.sub("", line).strip() if rule.strip_match else line
+                return rule.level, text
+        return None
     
     def md_to_df(self, md_str: str) -> pd.DataFrame | None:
         """Convert Markdown to dataframe."""
@@ -167,6 +191,18 @@ class MyMarkdownElementNodeParser(MarkdownElementNodeParser):
                     element=line.lstrip("#"),
                     title_level=len(line) - len(line.lstrip("#")),
                 )
+            # ── NEW: extra heading rules ──────────────────────────────
+            elif (match := self._apply_heading_rules(line)) is not None:
+                level, text_content = match
+                if currentElement is not None:
+                    elements.append(currentElement)
+                currentElement = Element(
+                    id=f"id_{len(elements)}",
+                    type="title",
+                    element=text_content,
+                    title_level=level,
+                )
+            # ─────────────────────────────────────────────────────────
             else:
                 if currentElement is not None and currentElement.type != "text":
                     elements.append(currentElement)

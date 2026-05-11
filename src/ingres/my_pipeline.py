@@ -190,176 +190,176 @@ class MyIngestionPipeline(IngestionPipeline):
             disable_cache=disable_cache,
         )
 
-def run(
-    self,
-    show_progress: bool = False,
-    documents: Optional[Sequence[Document]] = None,
-    nodes: Optional[Sequence[BaseNode]] = None,
-    cache_collection: Optional[str] = None,
-    in_place: bool = True,
-    store_doc_text: bool = True,
-    num_workers: Optional[int] = None,
-    **kwargs: Any,
-) -> Sequence[BaseNode]:
-    """
-    Run a series of transformations on a set of nodes.
+    def run(
+        self,
+        show_progress: bool = False,
+        documents: Optional[Sequence[Document]] = None,
+        nodes: Optional[Sequence[BaseNode]] = None,
+        cache_collection: Optional[str] = None,
+        in_place: bool = True,
+        store_doc_text: bool = True,
+        num_workers: Optional[int] = None,
+        **kwargs: Any,
+    ) -> Sequence[BaseNode]:
+        """
+        Run a series of transformations on a set of nodes.
 
-    If a vector store is provided, nodes with embeddings will be added to the vector store.
-    """
+        If a vector store is provided, nodes with embeddings will be added to the vector store.
+        """
 
-    input_nodes = list(self._prepare_inputs(documents, nodes))
-    nodes_to_run = input_nodes
+        input_nodes = list(self._prepare_inputs(documents, nodes))
+        nodes_to_run = input_nodes
 
-    batchsize = kwargs.pop("batchsize", None)
+        batchsize = kwargs.pop("batchsize", None)
 
-    result_nodes: list[BaseNode] = []
+        result_nodes: list[BaseNode] = []
 
-    def add_to_vector_store(nodes_to_add: Sequence[BaseNode]) -> None:
-        if self.vector_store is None:
-            return
+        def add_to_vector_store(nodes_to_add: Sequence[BaseNode]) -> None:
+            if self.vector_store is None:
+                return
 
-        b_size = 1000
-        embedded_nodes = [n for n in nodes_to_add if n.embedding is not None]
+            b_size = 1000
+            embedded_nodes = [n for n in nodes_to_add if n.embedding is not None]
 
-        for start in range(0, len(embedded_nodes), b_size):
-            batch = embedded_nodes[start : start + b_size]
-            print(
-                f"Processing node-batch for vector: "
-                f"{start // b_size + 1} of {(len(embedded_nodes) + b_size - 1) // b_size}"
-            )
-            self.vector_store.add(batch)
+            for start in range(0, len(embedded_nodes), b_size):
+                batch = embedded_nodes[start : start + b_size]
+                print(
+                    f"Processing node-batch for vector: "
+                    f"{start // b_size + 1} of {(len(embedded_nodes) + b_size - 1) // b_size}"
+                )
+                self.vector_store.add(batch)
 
-    if num_workers and num_workers > 1:
-        if num_workers > multiprocessing.cpu_count():
-            warnings.warn(
-                "Specified num_workers exceed number of CPUs in the system. "
-                "Setting `num_workers` down to the maximum CPU count."
-            )
-            num_workers = multiprocessing.cpu_count()
+        if num_workers and num_workers > 1:
+            if num_workers > multiprocessing.cpu_count():
+                warnings.warn(
+                    "Specified num_workers exceed number of CPUs in the system. "
+                    "Setting `num_workers` down to the maximum CPU count."
+                )
+                num_workers = multiprocessing.cpu_count()
 
-        with multiprocessing.get_context("spawn").Pool(num_workers) as p:
-            node_batches = self._node_batcher(
-                num_batches=num_workers,
-                nodes=nodes_to_run,
-            )
-
-            nodes_parallel = p.starmap(
-                run_transformations,
-                zip(
-                    node_batches,
-                    repeat(self.transformations),
-                    repeat(in_place),
-                    repeat(self.cache if not self.disable_cache else None),
-                    repeat(cache_collection),
-                ),
-            )
-
-        result_nodes = list(chain.from_iterable(nodes_parallel))
-        add_to_vector_store(result_nodes)
-
-    else:
-        if batchsize:
-            num_batches = len(nodes_to_run) // batchsize
-            remainder = len(nodes_to_run) % batchsize
-
-            for batch_index in range(num_batches):
-                batch = nodes_to_run[
-                    batch_index * batchsize : (batch_index + 1) * batchsize
-                ]
-
-                print(f"Processing batch: {batch_index + 1} of {num_batches}")
-
-                batch_nodes = run_transformations(
-                    batch,
-                    self.transformations,
-                    show_progress=show_progress,
-                    cache=self.cache if not self.disable_cache else None,
-                    cache_collection=cache_collection,
-                    in_place=in_place,
-                    **kwargs,
+            with multiprocessing.get_context("spawn").Pool(num_workers) as p:
+                node_batches = self._node_batcher(
+                    num_batches=num_workers,
+                    nodes=nodes_to_run,
                 )
 
-                result_nodes.extend(batch_nodes)
-                add_to_vector_store(batch_nodes)
-
-            if remainder > 0:
-                batch = nodes_to_run[num_batches * batchsize :]
-
-                print("Processing batch remainder")
-
-                batch_nodes = run_transformations(
-                    batch,
-                    self.transformations,
-                    show_progress=show_progress,
-                    cache=self.cache if not self.disable_cache else None,
-                    cache_collection=cache_collection,
-                    in_place=in_place,
-                    **kwargs,
+                nodes_parallel = p.starmap(
+                    run_transformations,
+                    zip(
+                        node_batches,
+                        repeat(self.transformations),
+                        repeat(in_place),
+                        repeat(self.cache if not self.disable_cache else None),
+                        repeat(cache_collection),
+                    ),
                 )
 
-                result_nodes.extend(batch_nodes)
-                add_to_vector_store(batch_nodes)
-
-        else:
-            result_nodes = list(
-                run_transformations(
-                    nodes_to_run,
-                    self.transformations,
-                    show_progress=show_progress,
-                    cache=self.cache if not self.disable_cache else None,
-                    cache_collection=cache_collection,
-                    in_place=in_place,
-                    **kwargs,
-                )
-            )
-
+            result_nodes = list(chain.from_iterable(nodes_parallel))
             add_to_vector_store(result_nodes)
 
-    return result_nodes
-    
-def _handle_upserts(
-    self,
-    nodes: Sequence[BaseNode],
-    store_doc_text: bool = True,
-) -> Sequence[BaseNode]:
-    """Handle docstore upserts by checking hashes and ids."""
-    assert self.docstore is not None
-    print("getting existing doc ids")
-    existing_doc_ids_before = set(self.docstore.get_all_document_hashes().values())
-    doc_ids_from_nodes = set()
-    deduped_nodes_to_run = {}
-    for node in tqdm(nodes,desc="Handling upserts"):
-        ref_doc_id = node.ref_doc_id if node.ref_doc_id else node.id_
-        doc_ids_from_nodes.add(ref_doc_id)
-        existing_hash = self.docstore.get_document_hash(ref_doc_id)
-        if not existing_hash:
-            # document doesn't exist, so add it
-            self.docstore.set_document_hash(ref_doc_id, node.hash)
-            deduped_nodes_to_run[ref_doc_id] = node
-        elif existing_hash and existing_hash != node.hash:
-            self.docstore.delete_ref_doc(ref_doc_id, raise_error=False)
-
-            if self.vector_store is not None:
-                self.vector_store.delete(ref_doc_id)
-
-            self.docstore.set_document_hash(ref_doc_id, node.hash)
-
-            deduped_nodes_to_run[ref_doc_id] = node
         else:
-            continue  # document exists and is unchanged, so skip it
+            if batchsize:
+                num_batches = len(nodes_to_run) // batchsize
+                remainder = len(nodes_to_run) % batchsize
 
-    if self.docstore_strategy == DocstoreStrategy.UPSERTS_AND_DELETE:
-        # Identify missing docs and delete them from docstore and vector store
-        doc_ids_to_delete = existing_doc_ids_before - doc_ids_from_nodes
-        for ref_doc_id in doc_ids_to_delete:
-            self.docstore.delete_document(ref_doc_id)
+                for batch_index in range(num_batches):
+                    batch = nodes_to_run[
+                        batch_index * batchsize : (batch_index + 1) * batchsize
+                    ]
 
-            if self.vector_store is not None:
-                self.vector_store.delete(ref_doc_id)
+                    print(f"Processing batch: {batch_index + 1} of {num_batches}")
 
-    nodes_to_run = list(deduped_nodes_to_run.values())
-    print("Writing hashes to docstore ...")
-    self.docstore.add_documents(nodes_to_run, store_text=store_doc_text)
-    print("... finished writing to docstore")
+                    batch_nodes = run_transformations(
+                        batch,
+                        self.transformations,
+                        show_progress=show_progress,
+                        cache=self.cache if not self.disable_cache else None,
+                        cache_collection=cache_collection,
+                        in_place=in_place,
+                        **kwargs,
+                    )
 
-    return nodes_to_run
+                    result_nodes.extend(batch_nodes)
+                    add_to_vector_store(batch_nodes)
+
+                if remainder > 0:
+                    batch = nodes_to_run[num_batches * batchsize :]
+
+                    print("Processing batch remainder")
+
+                    batch_nodes = run_transformations(
+                        batch,
+                        self.transformations,
+                        show_progress=show_progress,
+                        cache=self.cache if not self.disable_cache else None,
+                        cache_collection=cache_collection,
+                        in_place=in_place,
+                        **kwargs,
+                    )
+
+                    result_nodes.extend(batch_nodes)
+                    add_to_vector_store(batch_nodes)
+
+            else:
+                result_nodes = list(
+                    run_transformations(
+                        nodes_to_run,
+                        self.transformations,
+                        show_progress=show_progress,
+                        cache=self.cache if not self.disable_cache else None,
+                        cache_collection=cache_collection,
+                        in_place=in_place,
+                        **kwargs,
+                    )
+                )
+
+                add_to_vector_store(result_nodes)
+
+        return result_nodes
+        
+    def _handle_upserts(
+        self,
+        nodes: Sequence[BaseNode],
+        store_doc_text: bool = True,
+    ) -> Sequence[BaseNode]:
+        """Handle docstore upserts by checking hashes and ids."""
+        assert self.docstore is not None
+        print("getting existing doc ids")
+        existing_doc_ids_before = set(self.docstore.get_all_document_hashes().values())
+        doc_ids_from_nodes = set()
+        deduped_nodes_to_run = {}
+        for node in tqdm(nodes,desc="Handling upserts"):
+            ref_doc_id = node.ref_doc_id if node.ref_doc_id else node.id_
+            doc_ids_from_nodes.add(ref_doc_id)
+            existing_hash = self.docstore.get_document_hash(ref_doc_id)
+            if not existing_hash:
+                # document doesn't exist, so add it
+                self.docstore.set_document_hash(ref_doc_id, node.hash)
+                deduped_nodes_to_run[ref_doc_id] = node
+            elif existing_hash and existing_hash != node.hash:
+                self.docstore.delete_ref_doc(ref_doc_id, raise_error=False)
+
+                if self.vector_store is not None:
+                    self.vector_store.delete(ref_doc_id)
+
+                self.docstore.set_document_hash(ref_doc_id, node.hash)
+
+                deduped_nodes_to_run[ref_doc_id] = node
+            else:
+                continue  # document exists and is unchanged, so skip it
+
+        if self.docstore_strategy == DocstoreStrategy.UPSERTS_AND_DELETE:
+            # Identify missing docs and delete them from docstore and vector store
+            doc_ids_to_delete = existing_doc_ids_before - doc_ids_from_nodes
+            for ref_doc_id in doc_ids_to_delete:
+                self.docstore.delete_document(ref_doc_id)
+
+                if self.vector_store is not None:
+                    self.vector_store.delete(ref_doc_id)
+
+        nodes_to_run = list(deduped_nodes_to_run.values())
+        print("Writing hashes to docstore ...")
+        self.docstore.add_documents(nodes_to_run, store_text=store_doc_text)
+        print("... finished writing to docstore")
+
+        return nodes_to_run

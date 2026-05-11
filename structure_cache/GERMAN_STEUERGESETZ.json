@@ -1,0 +1,10 @@
+{
+  "family_id": "GERMAN_STEUERGESETZ",
+  "heading_rules": [
+    {
+      "pattern": "^§\\s*\\d+",
+      "level": 2,
+      "strip_match": false
+    }
+  ]
+}

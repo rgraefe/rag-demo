@@ -15,7 +15,7 @@ from llama_index.core.schema import Document, TextNode, NodeRelationship
 import sys
 import fsspec
 from fsspec.implementations.local import LocalFileSystem
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional, Type, Union
 from pathlib import Path, PurePosixPath
 from src.utils import FileCache
 from src.utils.tools import document_to_node
@@ -27,9 +27,12 @@ log = logging.getLogger(__name__)
 sys.path.append('../')
 
 
-def _try_loading_included_file_formats() -> Dict[str, Type[BaseReader]]:
-    """Load and return supported file format readers.
+def _try_loading_included_file_formats(
+    family_id: Optional[str] = None,
+    rules_dir: Optional[Path] = None,
+) -> Dict[str, Union[Type[BaseReader], BaseReader]]:
     
+    """
     This function dynamically imports file readers from llama_index and creates a mapping
     of file extensions to their corresponding reader classes. It includes support for
     standard formats (PDF, DOCX, PPTX, etc.) as well as custom readers for specialized
@@ -59,32 +62,34 @@ def _try_loading_included_file_formats() -> Dict[str, Type[BaseReader]]:
         from src.ingres import MarkDownSectionWalker, ExcelReader, PptxSlideReader, VisioReader, DocxSectionReader, PDFMarkdownReader
     except ImportError:
         raise ImportError("`llama-index-readers-file` package not found")
+    
+    pdf_reader  = PDFMarkdownReader(family_id=family_id, rules_dir=rules_dir)
+    #docx_reader = DocxSectionReader(family_id=family_id, rules_dir=rules_dir)
 
-    default_file_reader_cls: Dict[str, Type[BaseReader]] = {
-        ".hwp": HWPReader,
-        ".pdf": PDFMarkdownReader,
-        ".docx": DocxSectionReader,
-        ".pptx": PptxSlideReader,
-        ".ppt": PptxSlideReader,
-        ".pptm": PptxSlideReader,
-        ".jpg": ImageReader,
-        ".png": ImageReader,
-        ".jpeg": ImageReader,
-        ".mp3": VideoAudioReader,
-        ".mp4": VideoAudioReader,
-        ".csv": PandasCSVReader,
-        ".epub": EpubReader,
-        ".md": MarkDownSectionWalker,
-        ".mmd": MarkDownSectionWalker,
-        ".mbox": MboxReader,
+    return {
+        ".hwp":   HWPReader,
+        ".pdf":   pdf_reader,        # instance, not class
+        ".docx":  DocxSectionReader,    
+        ".pptx":  PptxSlideReader,
+        ".ppt":   PptxSlideReader,
+        ".pptm":  PptxSlideReader,
+        ".jpg":   ImageReader,
+        ".png":   ImageReader,
+        ".jpeg":  ImageReader,
+        ".mp3":   VideoAudioReader,
+        ".mp4":   VideoAudioReader,
+        ".csv":   PandasCSVReader,
+        ".epub":  EpubReader,
+        ".md":    MarkDownSectionWalker,
+        ".mmd":   MarkDownSectionWalker,
+        ".mbox":  MboxReader,
         ".ipynb": IPYNBReader,
-        ".xls": ExcelReader,
-        ".xlsx": ExcelReader,
-        ".xlsm": ExcelReader,
-        ".vsdx": VisioReader,
-        ".vsd": VisioReader,
+        ".xls":   ExcelReader,
+        ".xlsx":  ExcelReader,
+        ".xlsm":  ExcelReader,
+        ".vsdx":  VisioReader,
+        ".vsd":   VisioReader,
     }
-    return default_file_reader_cls
 
 
 def _format_file_timestamp(timestamp: Optional[float]) -> Optional[str]:
@@ -492,11 +497,13 @@ class ReaderFactory(SimpleDirectoryReader):
 
         file_suffix = input_file.suffix.lower()
         if file_suffix in default_file_reader_suffix or file_suffix in file_extractor:
-            # use file readers
             if file_suffix not in file_extractor:
-                # instantiate file reader if not already
                 reader_cls = default_file_reader_cls[file_suffix]
-                file_extractor[file_suffix] = reader_cls()
+                # ── handle both class and pre-instantiated reader ──
+                if isinstance(reader_cls, type):
+                    file_extractor[file_suffix] = reader_cls()
+                else:
+                    file_extractor[file_suffix] = reader_cls
             reader = file_extractor[file_suffix]
 
             # load data -- catch all errors except for ImportError
@@ -569,8 +576,10 @@ class ReaderFactory(SimpleDirectoryReader):
         if file_suffix in default_file_reader_suffix or file_suffix in file_extractor:
             if file_suffix not in file_extractor:
                 reader_cls = default_file_reader_cls[file_suffix]
-                file_extractor[file_suffix] = reader_cls()
-
+                if isinstance(reader_cls, type):
+                    file_extractor[file_suffix] = reader_cls()
+                else:
+                    file_extractor[file_suffix] = reader_cls
             reader = file_extractor[file_suffix]
 
             try:
