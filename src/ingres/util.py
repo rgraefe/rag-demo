@@ -6,6 +6,15 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import pymupdf as fitz
+from typing import Any
+
+
+def _int_attr(value: Any, default: int = 1) -> int:
+    """Safely convert a BeautifulSoup attribute value to int."""
+    try:
+        return int(str(value)) if value is not None else default
+    except (ValueError, TypeError):
+        return default
 
 def md_from_doc(file:Path) -> Path:
     directory = str(file.parent)
@@ -15,74 +24,72 @@ def md_from_doc(file:Path) -> Path:
     pypandoc.convert_file(str(file), to='gfm', format='docx', outputfile=out_dir)
     return out_path
 
-def html_to_md_table(html_content:str) -> str:
-    # Parse the HTML content
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Find the table in the HTML
-    table = soup.find('table')
+def html_to_md_table(html_content: str) -> str:
+    """Convert an HTML table to a markdown table or heading string.
     
+    Returns a markdown table string, a heading string if the table
+    contains only header rows with numbered patterns, or an empty
+    string if no table is found.
+    """
+    soup = BeautifulSoup(html_content, "html.parser")
+    table = soup.find("table")
+
+    if table is None:
+        return ""
+
+    # ── check if table contains only header rows ──────────────────────
     contains_only_th = True
-    # check if table only contains header rows
-    for row in table.find_all('tr'):
-        for cell in row.find_all(['th', 'td']):
-            if cell.name == 'td':
+    for row in table.find_all("tr"):
+        for cell in row.find_all(["th", "td"]):
+            if cell.name == "td":
                 contains_only_th = False
                 break
         if not contains_only_th:
             break
-        
-    # Extract headers
-    headers = [header.text.replace('\n','') for header in table.find_all('th')]
+
+    headers = [
+        header.text.replace("\n", "")
+        for header in table.find_all("th")
+    ]
+
     if contains_only_th:
         patterns = {
-            r'^\d{1,2}\.\d{1,2}\.\d{1,2}.*': 3,   # Pattern for a digit.digit.digit
-            r'^\d{1,2}\.\d{1,2}.*': 2,      # Pattern for a digit.digit
-            r'^\d{1,2}\s[^\.\/].*': 1          # Pattern for 1-2 digits without following dot or slash
+            r"^\d{1,2}\.\d{1,2}\.\d{1,2}.*": 3,
+            r"^\d{1,2}\.\d{1,2}.*":           2,
+            r"^\d{1,2}\s[^\.\/].*":            1,
+        }
+        if not headers:
+            return ""
 
-            }
-    
-        # Check the string against each pattern
-        is_number = False
         level = 0
         for pattern, value in patterns.items():
             if re.match(pattern, headers[0]):
-                is_number = True
                 level = value
                 break
-        if is_number:
-            str = "#" * level + " " + " ".join(headers)
-        else:
-            str = ""
-        return str
 
-            
-    # Initialize an empty list to store the new table rows
-    new_table = []
+        if level > 0:
+            return "#" * level + " " + " ".join(headers)
+        return ""
 
-    # Initialize a list to keep track of cells that span multiple rows
-    rowspan_tracker = []
+    # ── build table with rowspan / colspan handling ───────────────────
+    new_table: list[list[str]] = []
+    rowspan_tracker: list[list] = []
 
-    # Process each row in the original table
-    for row in table.find_all('tr'):
-        new_row = []            
+    for row in table.find_all("tr"):
+        new_row: list[str] = []
+        cells = row.find_all(["th", "td"])
+
         if not rowspan_tracker:
             col_idx = 0
-            for cell in row.find_all(['th', 'td']):
-                rowspan = int(cell.get('rowspan', 1))
-                colspan = int(cell.get('colspan', 1))
-                txt = cell.text.replace("\n\n","\n")
-                txt = txt.replace("\n"," ").strip()
-                
-                # Add the cell content to the current row
+            for cell in cells:
+                rowspan = _int_attr(cell.get("rowspan"), 1)
+                colspan = _int_attr(cell.get("colspan"), 1)
+                txt = cell.text.replace("\n\n", "\n").replace("\n", " ").strip()
                 for _ in range(colspan):
                     new_row.append(txt)
                     rowspan_tracker.insert(col_idx, [rowspan - 1, txt])
                     col_idx += 1
-                # Track rowspan for future rows
         else:
-        # Add cells from the rowspan_tracker first
-            cells = row.find_all(['th', 'td'])
             col_idx = 0
             while col_idx < len(rowspan_tracker):
                 if rowspan_tracker[col_idx][0] > 0:
@@ -90,38 +97,40 @@ def html_to_md_table(html_content:str) -> str:
                     rowspan_tracker[col_idx][0] -= 1
                     col_idx += 1
                 else:
-                    try:
+                    # pop next available cell — use empty string if none left
+                    if cells:
                         tmp = cells.pop(0)
-                        txt = tmp.text.replace("\n\n","\n")
-                        txt = txt.replace("\n"," ").strip()
-                    except Exception:
-                        txt = ""
-                    rowspan = int(tmp.get('rowspan', 1))
-                    colspan = int(tmp.get('colspan', 1))
-                    # Add the cell content to the current row
+                        txt = tmp.text.replace("\n\n", "\n").replace("\n", " ").strip()
+                        rowspan = _int_attr(tmp.get("rowspan"), 1)
+                        colspan = _int_attr(tmp.get("colspan"), 1)
+                    else:
+                        txt     = ""
+                        rowspan = 1
+                        colspan = 1
+
                     for _ in range(colspan):
                         new_row.append(txt)
-                        rowspan_tracker[col_idx] = [rowspan - 1,txt]
+                        rowspan_tracker[col_idx] = [rowspan - 1, txt]
                         col_idx += 1
-        # Ensure the new row has the correct number of columns
+
         new_table.append(new_row)
 
-    # Find the maximum number of columns in the new table
-    max_cols = max(len(row) for row in new_table)
+    if not new_table:
+        return ""
 
-    # Normalize rows to have the same number of columns
+    # ── normalise column count ────────────────────────────────────────
+    max_cols = max(len(row) for row in new_table)
     for row in new_table:
         while len(row) < max_cols:
-            row.append('')
-    # Create a DataFrame
-    if headers: 
+            row.append("")
+
+    # ── build dataframe and return markdown ───────────────────────────
+    if headers and len(headers) == max_cols:
         df = pd.DataFrame(new_table[1:], columns=headers)
     else:
         df = pd.DataFrame(new_table)
-        
+
     return df.to_markdown(index=False) + "\n\n"
-    # # remove uneccessary spaces
-    # for m in markdown.split('\n'):
         
         
 def find_lowest_level_tables(table):
@@ -192,8 +201,8 @@ def clean_tables(file:Path) -> str:
     with open(str(file), errors='replace') as f:
         for line in f:
             content.append(line)
-        out_str = clean_html_tables('\n'.join(content))
-    return out_str
+        #out_str = clean_html_tables('\n'.join(content))
+    return ''.join(content)
                 
 
 def is_watermark(text, short_wt, long_wt):
@@ -250,8 +259,10 @@ def remove_watermark(input_pdf, output_pdf, short_wt, long_wt):
     for page_num in range(len(pdf_document)):
         page = pdf_document.load_page(page_num)
         for xref in page.get_contents():
-            stream = pdf_document.xref_stream(xref).replace(b'The string to delete', b'')
-            pdf_document.update_stream(xref, stream)
+            stream = pdf_document.xref_stream(xref)
+            if stream is not None:
+                stream = stream.replace(b'The string to delete', b'')
+                pdf_document.update_stream(xref, stream)
         elements = extract_elements(page)
         
         # Identify and redact diagonal text

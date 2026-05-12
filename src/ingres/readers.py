@@ -47,29 +47,31 @@ def _try_loading_included_file_formats(
     """
     try:
         from llama_index.readers.file import (
-            DocxReader,
             EpubReader,
             HWPReader,
             ImageReader,
             IPYNBReader,
-            MarkdownReader,
             MboxReader,
             PandasCSVReader,
-            PDFReader,
-            PptxReader,
             VideoAudioReader,
-        )  # pants: no-infer-dep
-        from src.ingres import MarkDownSectionWalker, ExcelReader, PptxSlideReader, VisioReader, DocxSectionReader, PDFMarkdownReader
-    except ImportError:
-        raise ImportError("`llama-index-readers-file` package not found")
+        )
+    except ImportError as e:
+        raise ImportError(f"`llama-index-readers-file` package not found: {e}") from e
+    
+    from ingres.markdown_sect import MarkDownSectionWalker
+    from ingres.excel import ExcelReader
+    from ingres.ppt_slides import PptxSlideReader
+    from ingres.visio import VisioReader
+    from ingres.doc_sect import DocxSectionReader
+    from ingres.pdf_markdown import PDFMarkdownReader
     
     pdf_reader  = PDFMarkdownReader(family_id=family_id, rules_dir=rules_dir)
-    #docx_reader = DocxSectionReader(family_id=family_id, rules_dir=rules_dir)
+    docx_reader = DocxSectionReader(family_id=family_id, rules_dir=rules_dir)
 
     return {
         ".hwp":   HWPReader,
         ".pdf":   pdf_reader,        # instance, not class
-        ".docx":  DocxSectionReader,    
+        ".docx":  docx_reader,        # instance, not class
         ".pptx":  PptxSlideReader,
         ".ppt":   PptxSlideReader,
         ".pptm":  PptxSlideReader,

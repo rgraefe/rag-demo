@@ -1,6 +1,6 @@
 from llama_index.core.ingestion import IngestionCache
 
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
 from llama_index.core.schema import BaseNode
 from llama_index.core.storage.docstore.utils import doc_to_json, json_to_doc
@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 class MyIngestionCache(IngestionCache):
     def put(
-        self, key: str, nodes: List[BaseNode], collection: Optional[str] = None
+        self, key: str, nodes: Sequence[BaseNode], collection: Optional[str] = None
     ) -> None:
         """Put a value into the cache."""
         collection = collection or self.collection

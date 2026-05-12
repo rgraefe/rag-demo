@@ -1,215 +1,176 @@
+"""Docs parser.
+
+Contains parsers for docx files.
+
+"""
+
 import os
-from llama_index.core.readers.base import BaseReader
+import json
 import logging
-from pathlib import Path
-from llama_index.core.schema import Document, TextNode
-from docx.document import Document as DocxDocument    
-import re
-from collections import defaultdict
 import datetime
-from src.utils.tools import create_uuid_from_string
-from typing import List
+from collections import defaultdict
+from pathlib import Path
+from typing import Dict, List, Optional
+
 from bs4 import BeautifulSoup
-from src.ingres.markdown_parser import MyMarkdownNodeParser, MyMarkdownElementNodeParser
-from src.ingres.util import clean_tables, md_from_doc
+from docx.document import Document as DocxDocument
+from llama_index.core.readers.base import BaseReader
+from llama_index.core.schema import Document
+
+from ingres.heading_rules import HeadingRule
+from ingres.markdown_parser import MyMarkdownNodeParser
+from ingres.util import clean_tables, md_from_doc
 
 log = logging.getLogger(__name__)
 
+
 class DocxSectionReader(BaseReader):
-    
-    def __init__(self):
+    """Word document parser.
+
+    Converts .docx → Markdown via md_from_doc(), then splits into
+    section and list_item nodes using MarkdownNodeParser.
+
+    Heading rules are loaded from disk to handle documents where
+    structural headings are not correctly tagged in the Word file.
+    """
+
+    def __init__(
+        self,
+        heading_rules_path: Optional[Path] = None,
+        family_id: Optional[str] = None,
+        rules_dir: Optional[Path] = None,
+    ) -> None:
+        """
+        Parameters
+        ----------
+        heading_rules_path : direct path to a specific JSON rules file
+        family_id          : document family id (e.g. "EU_REGULATION")
+                             looks for <rules_dir>/<family_id>.json
+        rules_dir          : directory to search for family rule files
+                             defaults to ./structure_cache
+        """
         super(BaseReader, self).__init__()
-    
+        self._heading_rules: List[HeadingRule] = self._load_rules(
+            heading_rules_path=heading_rules_path,
+            family_id=family_id,
+            rules_dir=rules_dir or Path("./structure_cache"),
+        )
+
+    # ── rule loading ──────────────────────────────────────────────────
+
+    @staticmethod
+    def _load_rules(
+        heading_rules_path: Optional[Path],
+        family_id: Optional[str],
+        rules_dir: Path,
+    ) -> List[HeadingRule]:
+        """
+        Load heading rules from disk.
+
+        Resolution order:
+          1. explicit heading_rules_path
+          2. rules_dir / family_id.json
+          3. no rules (empty list — existing behaviour unchanged)
+        """
+        path: Optional[Path] = None
+
+        if heading_rules_path is not None:
+            path = Path(heading_rules_path)
+        elif family_id is not None:
+            candidate = rules_dir / f"{family_id}.json"
+            if candidate.exists():
+                path = candidate
+            else:
+                log.warning(
+                    "No rules file found for family '%s' at %s",
+                    family_id, candidate,
+                )
+
+        if path is None:
+            return []
+
+        if not path.exists():
+            log.warning("Heading rules file not found: %s", path)
+            return []
+
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            rules = [
+                HeadingRule.from_str(
+                    pattern=r["pattern"],
+                    level=r["level"],
+                    strip_match=r.get("strip_match", False),
+                )
+                for r in data.get("heading_rules", [])
+            ]
+            log.info("Loaded %d heading rule(s) from %s", len(rules), path)
+            return rules
+        except (json.JSONDecodeError, KeyError) as exc:
+            log.error("Failed to load heading rules from %s: %s", path, exc)
+            return []
+
+    # ── main entry point ──────────────────────────────────────────────
+
     def load_data(
         self,
         file: Path,
-        extra_info: dict = {},
+        extra_info: Optional[Dict] = None,
     ) -> List[Document]:
         """
-        Load markdown data starting with the given file and following links to section documents. 
-        Each document contains the lowest level section content. E.g. if there is no sub-section between
-        2 section headers than the document will be of level 1 and only the header1 metadata will be filled.
-        If there are sub-sections between 2 sections then there will be as many documents as sub-sections. 
-        The meta-data for these lower level documents will be: {level: "2", heading1: <parent heading>, heading2: <documents heading>}
-        If text belongs to the parent section then this text will be a separate document.
-        The lowest possible level is 3, in that cases heading1, heading2 and heading3 are filled in the metadata.
+        Parse a .docx file into a list of Document objects.
+
+        Each Document corresponds to one section or list_item node
+        as produced by MarkdownNodeParser. Structural metadata
+        (h1, h2, header_path, node_type) is preserved on each Document.
 
         Parameters
         ----------
-        start_file : str
-            The top level file to start with.
-
-        Returns:
-        -------
-        List[Document]
-            A list of loaded documents.
+        file       : path to the .docx file
+        extra_info : additional metadata merged into every document
         """
-        if os.path.exists(file):
-            # documents = []
-            # doc = Document(file)
-            # sections, tables = self.process_file(filename=file, doc=doc)
-            metadata = extra_info
-            # for section in list(sections.values()):
-            #     if metadata:
-            #         metadata["level"] = section["level"]
-            #         metadata["h1"] = section["h1"]
-            #         metadata["h2"] = section["h2"]
-            #         metadata["h3"] = section["h3"]
-            #         metadata["category"] = "Markdown"
-            #     else:
-            #         metadata={
-            #                   "file_path": section["filename"], 
-            #                   "file_name": os.path.basename(section["filename"]),
-            #                   "file_size": float(section["file_size"]),
-            #                   "creation_date": section["creation_date"],
-            #                   "last_modified_date": section["last_modified_date"],
-            #                   "level": section["level"],
-            #                   "h1": section["h1"],
-            #                   "h2": section["h2"],
-            #                   "h3": section["h3"],
-            #                   "category": "MSWord"}
-            #     txt = '\n'.join(section["text"])
-            #     txt = re.sub(r'\n+', '\n', txt)
-            #     document = Document(
-            #         text=txt,
-            #         metadata=metadata,
-            #     )
-            #     document.id_ = create_uuid_from_string(section["id"])
-            #     documents.append(document)
-            parser = MyMarkdownNodeParser.from_defaults(include_metadata=True,
-                                                  include_prev_next_rel=True)
-            md_path = md_from_doc(file=file)
-            
-            md_docs = clean_tables(md_path)
-            os.remove(md_path)
-            d = [Document(text=md_docs, metadata=metadata),]
-            docs = parser.get_nodes_from_documents(d)
-            md_parser = MyMarkdownElementNodeParser.from_defaults()
-            nodes = []
-            for doc in docs:
-                if isinstance(doc, TextNode):
-                    nodes.extend(md_parser.get_nodes_from_node(doc))
-            return nodes
-            #return documents
-        else:
-            log.error("File {} not found".format(file))
+        if not os.path.exists(file):
+            log.error("File %s not found", file)
             return []
-        
-    def get_file_times(self, path):
-        # file modification timestamp of a file
-        m_time = os.path.getmtime(path)
-        # convert timestamp into DateTime object
-        dt_m = datetime.datetime.fromtimestamp(m_time)
 
-        # file creation timestamp in float
-        c_time = os.path.getctime(path)
-        # convert creation timestamp into DateTime object
-        dt_c = datetime.datetime.fromtimestamp(c_time)
-        return dt_m, dt_c
-    
-    def process_file(
-        self,
-        filename: str,
-        doc: DocxDocument,        
-    ) -> list:
-        """_summary_
+        metadata: Dict = dict(extra_info or {})
 
-        Args:
-            filename (str): absolute path to file
-            doc (DocxDocument): content of a Word document
-            parent_section (str, optional): if the parent document contained a section title it is given here. Defaults to None.
-            parent_subsection (str, optional): if the parent document contained a subsection title it is given here. Defaults to None.
-            parent_subsubsection (str, optional): if the parent document contained a subsubsection title it is given here. Defaults to None.
-            level (int, optional): Level corresponding to the heading level from 1-3, e.g. if subsubsection is not none 
-            the level is 3. Defaults to None.
+        # ── step 1: docx → markdown ───────────────────────────────────
+        md_path: Optional[Path] = None
+        try:
+            md_path  = md_from_doc(file=file)
+            md_text  = clean_tables(md_path) or ""
+        finally:
+            if md_path is not None:
+                try:
+                    os.remove(md_path)
+                except OSError:
+                    pass
 
-        Returns:
-            List[Document]: List of Llamaindex Document objects with metadata
-        """
-        parent_section = None
-        parent_subsection = None
-        current_id = None
-        dt_m, dt_c = self.get_file_times(filename)
-        file_stats = os.stat(filename)
-        file_path = os.path.dirname(filename)
-        sections = defaultdict(dict)
-        current_section = defaultdict(str)
-        current_section["text"]= ""
-        current_section["filename"] = filename
-        current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
-        current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
-        current_section["file_size"] = str(file_stats.st_size)
-        
-        
-        for para in doc.paragraphs:
-            p_text = ""
-            soup = BeautifulSoup(para._p.xml)
-            for el in soup.find_all("w:p"):
-                text = ' '.join([line for line in el.text.split('\n') if line.strip() != ''])
-                
-                if len(text) > 0 and re.search(r'^.*[\d\w\W]+.*$',text):
-                    p_text += el.text.strip()
-                #print(repr("Element Text: {}".format(el.text.replace("\n", ""))))
-            style_name = (para.style.name or "") if para.style else ""
-            match = re.match(r'^Heading ([0-9]+)', style_name)
-            if match:
-                p_text = re.sub(r'\n+', '', p_text)
-                header_level = int(match.group(1))
-        
-                lvl = "h{}".format(header_level)
-                current_section = defaultdict(str)
-                if parent_section:
-                    current_section["h1"] = parent_section
-                if parent_subsection:
-                    current_section["h2"] = parent_subsection
-                current_section["text"]= ""
-                current_section["filename"] = filename
-                current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
-                current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
-                current_section["file_size"] = str(file_stats.st_size)
-                current_section_header = p_text
-                current_section[lvl] = current_section_header
-                if header_level == 1:
-                    parent_section = current_section_header
-                    current_section["h2"] = ""
-                    current_section["h3"] = ""
-                if header_level == 2:
-                    parent_subsection = current_section_header
-                    current_section["h3"] = ""
-                current_section["id"] = "{}_{}".format(lvl,current_section_header)
-                current_section["level"] = str(header_level)
-                current_section["text"] += p_text.strip()
-                current_id = current_section["id"]
-                sections[current_section["id"]] = current_section.copy()
-             
-            else:
-                if current_id:
-                    if len(p_text) > 0:
-                        endswithnewline = p_text.endswith('\n')
-                        p_text = re.sub(r'\n+', '', p_text)
-                        if endswithnewline:
-                            p_text = p_text + '\n'
-                        p_text = re.sub(r'\s+', ' ', p_text).strip()
-                        sections[current_id]["text"] += p_text
-                else:
-                    current_id = "Cover"
-                    lvl = "h0"
-                    current_section = defaultdict(str)
-                    current_section["text"]= ""
-                    current_section["filename"] = str(filename)
-                    current_section["creation_date"] = dt_c.strftime('%d-%m-%Y')
-                    current_section["last_modified_date"] = dt_m.strftime('%d-%m-%Y')
-                    current_section["file_size"] = str(file_stats.st_size)
-                    current_section_header = "Cover"
-                    current_section[lvl] = current_section_header
-                    current_section["id"] = "{}_{}".format(lvl,current_section_header)
-                    current_section["level"] = "0"
-                    if len(p_text) > 0:
-                        p_text = re.sub(r'\n+', '\n', p_text)
-                        p_text = re.sub(r'\s+', ' ', p_text).strip()
-                        sections[current_id]["text"] += p_text
-                    current_id = current_section["id"]
-                    sections[current_section["id"]] = current_section.copy()
-              
-        return list(sections)
-        
+        # ── step 2: parse into nodes ──────────────────────────────────
+        parser = MyMarkdownNodeParser.from_defaults(
+            heading_rules=self._heading_rules,
+        )
+
+        source_doc = Document(text=md_text, metadata=metadata)
+        nodes      = parser.get_nodes_from_node(source_doc)
+
+        # ── step 3: convert TextNodes back to Documents ───────────────
+        return [
+            Document(
+                text=node.get_content(),
+                metadata=dict(node.metadata or {}),
+                id_=node.node_id,
+            )
+            for node in nodes
+        ]
+
+    # ── utilities (kept for potential future use) ─────────────────────
+
+    def get_file_times(
+        self, path: str
+    ) -> tuple[datetime.datetime, datetime.datetime]:
+        """Return (last_modified, created) datetimes for a file."""
+        return (
+            datetime.datetime.fromtimestamp(os.path.getmtime(path)),
+            datetime.datetime.fromtimestamp(os.path.getctime(path)),
+        )

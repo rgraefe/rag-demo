@@ -2,7 +2,7 @@ from llama_index.core.readers.base import BaseReader
 from llama_index.core.schema import Document
 import logging
 import pandas as pd
-from src.ingres.markdown_parser import MyMarkdownElementNodeParser
+from src.ingres.markdown_parser import MyMarkdownNodeParser
 from src.ingres.util import clean_html_tables
 
 log = logging.getLogger(__name__)
@@ -78,7 +78,10 @@ class ExcelReader(BaseReader):
             md_data = clean_html_tables(content=data)
             document = Document(text=md_data, metadata=metadata)
             documents.append(document)
-        md_parser = MyMarkdownElementNodeParser.from_defaults()
+            
+            
+ 
+        md_parser = MyMarkdownNodeParser.from_defaults()
         nodes = []
         for doc in documents:
             nodes.extend(md_parser.get_nodes_from_node(doc))

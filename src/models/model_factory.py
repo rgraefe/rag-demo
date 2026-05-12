@@ -1,17 +1,18 @@
 from dotenv import load_dotenv, find_dotenv
 import logging
 import os
-from enum import Enum, auto
-from llama_index.llms.azure_openai import AzureOpenAI
-from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+from enum import Enum
+
+from llama_index.core.llms.llm import LLM
+from llama_index.core.base.embeddings.base import BaseEmbedding
+
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
-from langchain_openai import AzureOpenAI as LCAzureOpenAI
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
 log = logging.getLogger(__name__)
+
 
 class Modeltypes(Enum):
     OPENAI = 1
@@ -19,122 +20,93 @@ class Modeltypes(Enum):
     NOMIC = 3
     SNOWFLAKE = 4
     MXBAI = 5
+
+
 class ModelFactory:
-    """returns specific model and embedding, for future flexibility
-        
+    """Factory for LLM and embedding models."""
 
-    """
     @staticmethod
-    def getLlmModel(modeltype: Modeltypes):
-        
-
+    def getLlmModel(modeltype: Modeltypes) -> LLM:
         if modeltype == Modeltypes.OPENAI:
             return ModelFactory._getOpenAILlmModel()
+
         if modeltype == Modeltypes.OLLAMA:
             return ModelFactory._getOllamaLlmModel()
-            
+
+        raise ValueError(f"Unsupported LLM model type: {modeltype}")
+
     @staticmethod
-    def getEmbedModel(modeltype: Modeltypes):
-        
+    def getEmbedModel(modeltype: Modeltypes) -> BaseEmbedding:
         if modeltype == Modeltypes.OPENAI:
             return ModelFactory._getOpenAIEmbedModel()
+
         if modeltype == Modeltypes.NOMIC:
             return ModelFactory._getNomicEmbedModel()
+
         if modeltype == Modeltypes.MXBAI:
             return ModelFactory._getMxbaiEmbedModel()
+
         if modeltype == Modeltypes.SNOWFLAKE:
-            return ModelFactory._getSnowflakeEmbedModel() 
-    
-  
-    @staticmethod
-    def _getOpenAILlmModel():
-        """Returns OpenAI Model
-           it expects the variable OPENAI_API_KEY
-           to be provided through a .env file.
+            return ModelFactory._getSnowflakeEmbedModel()
 
-        Returns:
-            OpenAI LLM model
+        raise ValueError(f"Unsupported embedding model type: {modeltype}")
+
+    @staticmethod
+    def _getOpenAILlmModel() -> LLM:
+        """Return OpenAI LLM.
+
+        Expects OPENAI_API_KEY to be provided through a .env file.
         """
         load_dotenv(find_dotenv())
-        llm = OpenAI(
+
+        return OpenAI(
             model="gpt-4o-mini",
-            api_key=os.environ["OPENAI_API_KEY"]
+            api_key=os.environ["OPENAI_API_KEY"],
         )
-        
-        return llm
-    
+
     @staticmethod
-    def _getOllamaLlmModel():
-        """Returns Ollama Model
+    def _getOllamaLlmModel() -> LLM:
+        """Return Ollama LLM."""
+        return Ollama(
+            model="llama3.2",
+            base_url="http://localhost:11434",
+            request_timeout=60.0,
+        )
 
-        Returns:
-            Ollama LLM model
-        """
-        llm = Ollama(model="llama3.2", base_url="http://localhost:11434", request_timeout=60.0)
-
-        
-        return llm
-    
-    
     @staticmethod
-    def _getOpenAIEmbedModel():
-        """Returns OpenAI Embedding Model
-           it expects the variable OPENAI_API_KEY
-           to be provided through a .env file.
+    def _getOpenAIEmbedModel() -> BaseEmbedding:
+        """Return OpenAI embedding model.
 
-        Returns:
-            OpenAIEmbedding: OpenAI embedding model
+        Expects OPENAI_API_KEY to be provided through a .env file.
         """
         load_dotenv(find_dotenv())
 
-        embed_model = OpenAIEmbedding(
+        return OpenAIEmbedding(
             model="text-embedding-3-small",
-            api_key=os.environ["OPENAI_API_KEY"]
+            api_key=os.environ["OPENAI_API_KEY"],
         )
-        
-        return embed_model
-    
-    
-    @staticmethod
-    def _getNomicEmbedModel():
-        """Returns Ollama Embedding for nomic-embed-text-v1.5 model
 
-        Returns:
-            OllamaEmbedding
-        """
-        embed_model = OllamaEmbedding(
+    @staticmethod
+    def _getNomicEmbedModel() -> BaseEmbedding:
+        """Return Ollama embedding for nomic-embed-text."""
+        return OllamaEmbedding(
             model_name="nomic-embed-text",
             base_url="http://localhost:11434",
             ollama_additional_kwargs={"mirostat": 0},
         )
-        
-        return embed_model
-    
-    @staticmethod
-    def _getMxbaiEmbedModel():
-        """Returns Ollama Embedding for mxbai-embed-large-v1 model
 
-        Returns:
-            OllamaEmbedding
-        """
-        embed_model = OllamaEmbedding(
+    @staticmethod
+    def _getMxbaiEmbedModel() -> BaseEmbedding:
+        """Return Ollama embedding for mxbai-embed-large."""
+        return OllamaEmbedding(
             model_name="mxbai-embed-large",
             base_url="http://localhost:11434",
         )
-        
-        return embed_model
-    
-    @staticmethod
-    def _getSnowflakeEmbedModel():
-        """Returns Ollama Embedding for snowflake-arctic-embed2 model
 
-        Returns:
-            OllamaEmbedding
-        """
-        embed_model = OllamaEmbedding(
+    @staticmethod
+    def _getSnowflakeEmbedModel() -> BaseEmbedding:
+        """Return Ollama embedding for snowflake-arctic-embed2."""
+        return OllamaEmbedding(
             model_name="snowflake-arctic-embed2",
             base_url="http://localhost:11434",
         )
-        
-        return embed_model
-
