@@ -33,6 +33,12 @@ from llama_index.core.vector_stores.types import BasePydanticVectorStore
  
 from tqdm import tqdm
 
+def is_parent_document_parser(transform: TransformComponent) -> bool:
+    return (
+        getattr(transform, "class_name", lambda: "")()
+        == "ParentDocumentNodeParser"
+    )
+
 def run_transformations(
     nodes: Sequence[BaseNode],
     transformations: Sequence[TransformComponent],
@@ -55,19 +61,22 @@ def run_transformations(
 
     
     for transform in transformations:
-        # some documents are huge and produce sub-nodes that are too many to write into the database at once
-        if len(nodes) > 1000:
+        force_full_run = is_parent_document_parser(transform)
+
+        if len(nodes) > 1000 and not force_full_run:
             batch_size = 1000
-            # Calculate the number of batches
             num_batches = len(nodes) // batch_size
             remainder = len(nodes) % batch_size
             nodes_list = []
+
             for i in range(num_batches):
                 ns = nodes[i * batch_size: (i + 1) * batch_size]
-                print("Processing node-batch: {} of {}".format(i+1, num_batches))
+                print("Processing node-batch: {} of {}".format(i + 1, num_batches))
+
                 if cache is not None:
                     hash = get_transformation_hash(ns, transform)
                     cached_nodes = cache.get(hash, collection=cache_collection)
+
                     if cached_nodes is not None:
                         n = cached_nodes
                     else:
@@ -75,19 +84,22 @@ def run_transformations(
                         print("writing to cache ...")
                         try:
                             cache.put(hash, n, collection=cache_collection)
-                        except:
+                        except Exception:
                             print("unable to write into cache")
-                            pass
                         print("... end writing to cache")
                 else:
-                    n = transform(nodes, **kwargs)
+                    n = transform(ns, **kwargs)
+
                 nodes_list.extend(n)
+
             if remainder > 0:
                 ns = nodes[num_batches * batch_size:]
                 print("Processing node remainder")
+
                 if cache is not None:
                     hash = get_transformation_hash(ns, transform)
                     cached_nodes = cache.get(hash, collection=cache_collection)
+
                     if cached_nodes is not None:
                         n = cached_nodes
                     else:
@@ -95,18 +107,21 @@ def run_transformations(
                         print("writing to cache ...")
                         try:
                             cache.put(hash, n, collection=cache_collection)
-                        except:
+                        except Exception:
                             print("unable to write into cache")
-                            pass
                         print("... end writing to cache")
                 else:
-                    n = transform(nodes, **kwargs)
+                    n = transform(ns, **kwargs)
+
                 nodes_list.extend(n)
+
             nodes = nodes_list
+
         else:
             if cache is not None:
                 hash = get_transformation_hash(nodes, transform)
                 cached_nodes = cache.get(hash, collection=cache_collection)
+
                 if cached_nodes is not None:
                     nodes = cached_nodes
                 else:
@@ -114,9 +129,8 @@ def run_transformations(
                     print("writing to cache ...")
                     try:
                         cache.put(hash, nodes, collection=cache_collection)
-                    except:
+                    except Exception:
                         print("unable to write into cache")
-                        pass
                     print("... end writing to cache")
             else:
                 nodes = transform(nodes, **kwargs)
@@ -202,120 +216,195 @@ class MyIngestionPipeline(IngestionPipeline):
         **kwargs: Any,
     ) -> Sequence[BaseNode]:
         """
-        Run a series of transformations on a set of nodes.
+        Run ingestion in two phases:
 
-        If a vector store is provided, nodes with embeddings will be added to the vector store.
+        1. Structural phase:
+        - MyMarkdownNodeParser
+        - ParentDocumentNodeParser
+        Writes ALL structural nodes to docstore:
+        - article parent nodes
+        - paragraph leaf nodes
+
+        2. Embedding phase:
+        - ParagraphOnlyFilter
+        - embed_model
+        Writes only embedded leaf nodes to vector store.
         """
 
         input_nodes = list(self._prepare_inputs(documents, nodes))
-        nodes_to_run = input_nodes
 
-        batchsize = kwargs.pop("batchsize", None)
+        if not input_nodes:
+            return []
 
-        result_nodes: list[BaseNode] = []
+        # ------------------------------------------------------------
+        # 1. Split transformations into:
+        #    structural_transformations = up to and including ParentDocumentNodeParser
+        #    embedding_transformations = everything after it
+        # ------------------------------------------------------------
 
-        def add_to_vector_store(nodes_to_add: Sequence[BaseNode]) -> None:
-            if self.vector_store is None:
-                return
+        parent_parser_index: Optional[int] = None
 
-            b_size = 1000
-            embedded_nodes = [n for n in nodes_to_add if n.embedding is not None]
+        for i, transform in enumerate(self.transformations):
+            if is_parent_document_parser(transform):
+                parent_parser_index = i
+                break
 
-            for start in range(0, len(embedded_nodes), b_size):
-                batch = embedded_nodes[start : start + b_size]
-                print(
-                    f"Processing node-batch for vector: "
-                    f"{start // b_size + 1} of {(len(embedded_nodes) + b_size - 1) // b_size}"
+        if parent_parser_index is None:
+            # Fallback: no ParentDocumentNodeParser found.
+            # Behave like a normal ingestion pipeline, but still use your
+            # batching/vector-store logic.
+            result_nodes = list(
+                run_transformations(
+                    input_nodes,
+                    self.transformations,
+                    show_progress=show_progress,
+                    cache=self.cache if not self.disable_cache else None,
+                    cache_collection=cache_collection,
+                    in_place=in_place,
+                    **kwargs,
                 )
-                self.vector_store.add(batch)
+            )
 
-        if num_workers and num_workers > 1:
-            if num_workers > multiprocessing.cpu_count():
-                warnings.warn(
-                    "Specified num_workers exceed number of CPUs in the system. "
-                    "Setting `num_workers` down to the maximum CPU count."
+            if self.vector_store is not None:
+                embedded_nodes = [n for n in result_nodes if n.embedding is not None]
+                if embedded_nodes:
+                    self.vector_store.add(embedded_nodes)
+
+            if self.docstore is not None:
+                self.docstore.set_document_hashes(
+                    {n.id_: n.hash for n in result_nodes}
                 )
-                num_workers = multiprocessing.cpu_count()
-
-            with multiprocessing.get_context("spawn").Pool(num_workers) as p:
-                node_batches = self._node_batcher(
-                    num_batches=num_workers,
-                    nodes=nodes_to_run,
-                )
-
-                nodes_parallel = p.starmap(
-                    run_transformations,
-                    zip(
-                        node_batches,
-                        repeat(self.transformations),
-                        repeat(in_place),
-                        repeat(self.cache if not self.disable_cache else None),
-                        repeat(cache_collection),
-                    ),
+                self.docstore.add_documents(
+                    result_nodes,
+                    store_text=store_doc_text,
                 )
 
-            result_nodes = list(chain.from_iterable(nodes_parallel))
-            add_to_vector_store(result_nodes)
+            return result_nodes
+
+        structural_transformations = self.transformations[: parent_parser_index + 1]
+        embedding_transformations = self.transformations[parent_parser_index + 1 :]
+
+        # ------------------------------------------------------------
+        # 2. Deduplicate source documents before running transformations
+        # ------------------------------------------------------------
+
+        effective_strategy = self.docstore_strategy
+
+        if (
+            self.docstore is not None
+            and self.vector_store is None
+            and self.docstore_strategy
+            in (DocstoreStrategy.UPSERTS, DocstoreStrategy.UPSERTS_AND_DELETE)
+        ):
+            warnings.warn(
+                f"docstore_strategy='{self.docstore_strategy.value}' requires "
+                "a vector store to apply upsert/delete semantics; falling back "
+                "to 'duplicates_only' for this run.",
+                UserWarning,
+                stacklevel=2,
+            )
+            effective_strategy = DocstoreStrategy.DUPLICATES_ONLY
+
+        if self.docstore is not None and self.vector_store is not None:
+            if effective_strategy in (
+                DocstoreStrategy.UPSERTS,
+                DocstoreStrategy.UPSERTS_AND_DELETE,
+            ):
+                nodes_to_run = self._handle_upserts(input_nodes)
+            elif effective_strategy == DocstoreStrategy.DUPLICATES_ONLY:
+                nodes_to_run = self._handle_duplicates(input_nodes)
+            else:
+                raise ValueError(f"Invalid docstore strategy: {effective_strategy}")
+
+        elif self.docstore is not None and self.vector_store is None:
+            nodes_to_run = self._handle_duplicates(input_nodes)
 
         else:
-            if batchsize:
-                num_batches = len(nodes_to_run) // batchsize
-                remainder = len(nodes_to_run) % batchsize
+            nodes_to_run = input_nodes
 
-                for batch_index in range(num_batches):
-                    batch = nodes_to_run[
-                        batch_index * batchsize : (batch_index + 1) * batchsize
-                    ]
+        if not nodes_to_run:
+            return []
 
-                    print(f"Processing batch: {batch_index + 1} of {num_batches}")
+        # ------------------------------------------------------------
+        # 3. Run structural transformations
+        #    Important: ParentDocumentNodeParser must see the full ordered stream.
+        # ------------------------------------------------------------
 
-                    batch_nodes = run_transformations(
-                        batch,
-                        self.transformations,
-                        show_progress=show_progress,
-                        cache=self.cache if not self.disable_cache else None,
-                        cache_collection=cache_collection,
-                        in_place=in_place,
-                        **kwargs,
-                    )
+        structural_nodes = list(
+            run_transformations(
+                nodes_to_run,
+                structural_transformations,
+                show_progress=show_progress,
+                cache=self.cache if not self.disable_cache else None,
+                cache_collection=cache_collection,
+                in_place=in_place,
+                **kwargs,
+            )
+        )
 
-                    result_nodes.extend(batch_nodes)
-                    add_to_vector_store(batch_nodes)
+        # ------------------------------------------------------------
+        # 4. Write ALL structural nodes to docstore
+        #    This includes:
+        #    - article parent nodes
+        #    - paragraph leaf nodes
+        # ------------------------------------------------------------
 
-                if remainder > 0:
-                    batch = nodes_to_run[num_batches * batchsize :]
+        if self.docstore is not None:
+            self.docstore.set_document_hashes(
+                {n.id_: n.hash for n in structural_nodes}
+            )
+            self.docstore.add_documents(
+                structural_nodes,
+                store_text=store_doc_text,
+            )
 
-                    print("Processing batch remainder")
+        # ------------------------------------------------------------
+        # 5. Run embedding transformations
+        #    Usually:
+        #    - ParagraphOnlyFilter()
+        #    - embed_model
+        # ------------------------------------------------------------
 
-                    batch_nodes = run_transformations(
-                        batch,
-                        self.transformations,
-                        show_progress=show_progress,
-                        cache=self.cache if not self.disable_cache else None,
-                        cache_collection=cache_collection,
-                        in_place=in_place,
-                        **kwargs,
-                    )
-
-                    result_nodes.extend(batch_nodes)
-                    add_to_vector_store(batch_nodes)
-
-            else:
-                result_nodes = list(
-                    run_transformations(
-                        nodes_to_run,
-                        self.transformations,
-                        show_progress=show_progress,
-                        cache=self.cache if not self.disable_cache else None,
-                        cache_collection=cache_collection,
-                        in_place=in_place,
-                        **kwargs,
-                    )
+        if embedding_transformations:
+            embedded_nodes = list(
+                run_transformations(
+                    structural_nodes,
+                    embedding_transformations,
+                    show_progress=show_progress,
+                    cache=self.cache if not self.disable_cache else None,
+                    cache_collection=cache_collection,
+                    in_place=in_place,
+                    **kwargs,
                 )
+            )
+        else:
+            embedded_nodes = structural_nodes
 
-                add_to_vector_store(result_nodes)
+        # ------------------------------------------------------------
+        # 6. Write only embedded nodes to vector store
+        # ------------------------------------------------------------
 
-        return result_nodes
+        if self.vector_store is not None:
+            nodes_with_embeddings = [
+                n for n in embedded_nodes
+                if n.embedding is not None
+            ]
+
+            if nodes_with_embeddings:
+                b_size = 1000
+
+                for start in range(0, len(nodes_with_embeddings), b_size):
+                    batch = nodes_with_embeddings[start : start + b_size]
+
+                    print(
+                        f"Processing node-batch for vector: "
+                        f"{start // b_size + 1} of "
+                        f"{(len(nodes_with_embeddings) + b_size - 1) // b_size}"
+                    )
+
+                    self.vector_store.add(batch)
+
+        return embedded_nodes
         
     def _handle_upserts(
         self,
