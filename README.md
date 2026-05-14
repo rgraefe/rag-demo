@@ -86,4 +86,4 @@ If you don't want to use OpenAI you can try llama3 installed in the Ollama docke
 
 ## Usage
 
-At this time there is one Jupyter notebook `notebooks\create_new_vectorindex.ipynb`. It demonstrate parsing and storing PDF files for the Regulatory Gap Analysis use case. More notebooks and graphical interfaces will follow in the future. Stay tuned.
+The directory `notebooks` contains several Jupyter notebooks demonstrating different aspects of the use case implementation. Notebook `create_new_vectorindex.ipynb` demonstrate parsing and storing PDF files for the Regulatory Gap Analysis use case. Notebook `parent_retriever.ipynb` demonstrates retrieving parent/child related documents based on the parsed PDF files.
