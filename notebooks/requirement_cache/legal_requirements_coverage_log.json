@@ -1,0 +1,1163 @@
+{
+  "1bc2b1d1-4c52-4910-bbb8-41377eb47fe8": {
+    "article_id": "1bc2b1d1-4c52-4910-bbb8-41377eb47fe8",
+    "header_path": "/",
+    "source_name": "GDPR",
+    "child_count": 0,
+    "text_length": 163981,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T16:39:22.525890Z"
+  },
+  "871b7e10-fd79-4a44-9723-dd6a8d12b43d": {
+    "article_id": "871b7e10-fd79-4a44-9723-dd6a8d12b43d",
+    "header_path": "/",
+    "source_name": "GDPR",
+    "child_count": 106,
+    "text_length": 100016,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:39:32.659506Z"
+  },
+  "dd890759-a478-44a7-93aa-fd1e0cc46673": {
+    "article_id": "dd890759-a478-44a7-93aa-fd1e0cc46673",
+    "header_path": "/Article 25(6) or Article 26(4) of Directive 95/46/EC. In its/",
+    "source_name": "GDPR",
+    "child_count": 37,
+    "text_length": 34647,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:01.906562Z"
+  },
+  "6ad27048-cce2-4dd8-b10c-0ab43d669d1b": {
+    "article_id": "6ad27048-cce2-4dd8-b10c-0ab43d669d1b",
+    "header_path": "/Article 267 TFEU as interpreted by the Court of Justice, where it/",
+    "source_name": "GDPR",
+    "child_count": 30,
+    "text_length": 26815,
+    "requirements_extracted": 8,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:39.860350Z"
+  },
+  "65ad20bd-8051-4546-9482-ce2a8d04a736": {
+    "article_id": "65ad20bd-8051-4546-9482-ce2a8d04a736",
+    "header_path": "/CHAPTER I General provisions/",
+    "source_name": "GDPR",
+    "child_count": 38,
+    "text_length": 12463,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:40.421318Z"
+  },
+  "b9928ba5-bc9b-4951-a304-5dac641fca84": {
+    "article_id": "b9928ba5-bc9b-4951-a304-5dac641fca84",
+    "header_path": "/CHAPTER I General provisions/Article 1 Subject-matter and objectives/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 610,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:41.196364Z"
+  },
+  "6f3ce677-af09-45d5-856f-136b5c9e59c2": {
+    "article_id": "6f3ce677-af09-45d5-856f-136b5c9e59c2",
+    "header_path": "/CHAPTER I General provisions/Article 2 Material scope/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1517,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:41.625032Z"
+  },
+  "8087b3c1-ae75-4d9e-937a-595f513c2e34": {
+    "article_id": "8087b3c1-ae75-4d9e-937a-595f513c2e34",
+    "header_path": "/CHAPTER I General provisions/Article 3 Territorial scope/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 969,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:52.364773Z"
+  },
+  "547fd198-6cc7-49d7-ac78-74493e28ed49": {
+    "article_id": "547fd198-6cc7-49d7-ac78-74493e28ed49",
+    "header_path": "/CHAPTER I General provisions/Article 4 Definitions/",
+    "source_name": "GDPR",
+    "child_count": 28,
+    "text_length": 9320,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:43:53.202049Z"
+  },
+  "e6030157-e9f9-471a-a786-16bfa9075fc5": {
+    "article_id": "e6030157-e9f9-471a-a786-16bfa9075fc5",
+    "header_path": "/CHAPTER II Principles/",
+    "source_name": "GDPR",
+    "child_count": 19,
+    "text_length": 15506,
+    "requirements_extracted": 15,
+    "status": "success",
+    "processed_at": "2026-05-20T16:44:22.012198Z"
+  },
+  "238aad8a-113a-4da1-acf7-7b22278912e3": {
+    "article_id": "238aad8a-113a-4da1-acf7-7b22278912e3",
+    "header_path": "/CHAPTER II Principles/Article 11 Processing which does not require identification/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 893,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:44:30.225259Z"
+  },
+  "fb05fd38-c546-4e8f-a932-5d6003042330": {
+    "article_id": "fb05fd38-c546-4e8f-a932-5d6003042330",
+    "header_path": "/CHAPTER II Principles/Article 5 Principles relating to processing of personal data/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 2296,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T16:44:44.743655Z"
+  },
+  "a1583b62-fde2-4446-b610-afd2fee357cd": {
+    "article_id": "a1583b62-fde2-4446-b610-afd2fee357cd",
+    "header_path": "/CHAPTER II Principles/Article 6 Lawfulness of processing/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 4417,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:44:54.209011Z"
+  },
+  "0b395e0f-811b-4dc4-a7ba-9c03f8c51715": {
+    "article_id": "0b395e0f-811b-4dc4-a7ba-9c03f8c51715",
+    "header_path": "/CHAPTER II Principles/Article 7 Conditions for consent/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1293,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:45:07.041660Z"
+  },
+  "1d0ead57-0622-40db-8386-5cac3b4697fb": {
+    "article_id": "1d0ead57-0622-40db-8386-5cac3b4697fb",
+    "header_path": "/CHAPTER II Principles/Article 8 Conditions applicable to childâ€™s consent in relation to/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1075,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:45:17.964387Z"
+  },
+  "c9c3c12d-f443-4b97-9583-45263604fb45": {
+    "article_id": "c9c3c12d-f443-4b97-9583-45263604fb45",
+    "header_path": "/CHAPTER II Principles/Article 9 Processing of special categories of personal data/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 4866,
+    "requirements_extracted": 13,
+    "status": "success",
+    "processed_at": "2026-05-20T16:46:00.813199Z"
+  },
+  "b5d65719-176b-47c2-a8b8-a23caa30273a": {
+    "article_id": "b5d65719-176b-47c2-a8b8-a23caa30273a",
+    "header_path": "/CHAPTER III Rights of the data subject/",
+    "source_name": "GDPR",
+    "child_count": 37,
+    "text_length": 27567,
+    "requirements_extracted": 13,
+    "status": "success",
+    "processed_at": "2026-05-20T16:46:40.387369Z"
+  },
+  "bedc552f-1227-4b35-a5dc-08058ef5fd9c": {
+    "article_id": "bedc552f-1227-4b35-a5dc-08058ef5fd9c",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 12 Transparent information, communication and modalities for/",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 3883,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T16:47:00.695574Z"
+  },
+  "7e69df6d-a1fe-4a00-8a25-0a57677042bc": {
+    "article_id": "7e69df6d-a1fe-4a00-8a25-0a57677042bc",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 13 Information to be provided where personal data are/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 3562,
+    "requirements_extracted": 13,
+    "status": "success",
+    "processed_at": "2026-05-20T16:47:40.080248Z"
+  },
+  "dbaf1309-e1a5-4206-ad57-b3cf4f48eec0": {
+    "article_id": "dbaf1309-e1a5-4206-ad57-b3cf4f48eec0",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 14 Information to be provided where personal data have not/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 1090,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:47:56.382094Z"
+  },
+  "a4b208d7-26e5-4d36-9eec-99e80e4556e8": {
+    "article_id": "a4b208d7-26e5-4d36-9eec-99e80e4556e8",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 15 Right of access by the data subject/",
+    "source_name": "GDPR",
+    "child_count": 11,
+    "text_length": 2272,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:48:17.007146Z"
+  },
+  "ff5baa2d-a213-44ba-b8e4-4057bc6676f8": {
+    "article_id": "ff5baa2d-a213-44ba-b8e4-4057bc6676f8",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 17 Right to erasure (â€˜right to be forgottenâ€™)/",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 2363,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T16:48:23.704854Z"
+  },
+  "e72d6b53-b82e-4c81-9b01-a922cac8821e": {
+    "article_id": "e72d6b53-b82e-4c81-9b01-a922cac8821e",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 18 Right to restriction of processing/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1480,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:48:30.969863Z"
+  },
+  "83c8e7a9-201d-453e-acdc-9771647d06c9": {
+    "article_id": "83c8e7a9-201d-453e-acdc-9771647d06c9",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 20 Right to data portability/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 1352,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:48:42.079800Z"
+  },
+  "9555d08f-021c-421c-8084-8529647cc3c0": {
+    "article_id": "9555d08f-021c-421c-8084-8529647cc3c0",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 21 Right to object/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1998,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:49:01.797308Z"
+  },
+  "ddeec737-c967-4964-89df-4fb07f526c39": {
+    "article_id": "ddeec737-c967-4964-89df-4fb07f526c39",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 22 Automated individual decision-making, including profiling/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1502,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:49:16.731645Z"
+  },
+  "a122984f-9114-4d08-b885-0ef91645e1c3": {
+    "article_id": "a122984f-9114-4d08-b885-0ef91645e1c3",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 23 Restrictions/",
+    "source_name": "GDPR",
+    "child_count": 17,
+    "text_length": 2377,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T16:49:24.092273Z"
+  },
+  "ac2cb9dd-efc7-41cc-b44b-cfe2fa0d3513": {
+    "article_id": "ac2cb9dd-efc7-41cc-b44b-cfe2fa0d3513",
+    "header_path": "/CHAPTER III Rights of the data subject/Article 49(1), reference to the appropriate or suitable/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 4050,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:49:31.211804Z"
+  },
+  "cf683fc6-6af4-4bff-b7f4-cbc995120e94": {
+    "article_id": "cf683fc6-6af4-4bff-b7f4-cbc995120e94",
+    "header_path": "/CHAPTER IV Controller and processor/",
+    "source_name": "GDPR",
+    "child_count": 106,
+    "text_length": 49798,
+    "requirements_extracted": 0,
+    "status": "error",
+    "error": "Request timed out.",
+    "processed_at": "2026-05-20T16:53:34.584557Z"
+  },
+  "c49c6463-cee3-42a9-b274-ed9df266ec00": {
+    "article_id": "c49c6463-cee3-42a9-b274-ed9df266ec00",
+    "header_path": "/CHAPTER IV Controller and processor/Article 24 Responsibility of the controller/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 956,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:53:41.801494Z"
+  },
+  "0e9ac567-217a-4206-928e-41a361ff13b9": {
+    "article_id": "0e9ac567-217a-4206-928e-41a361ff13b9",
+    "header_path": "/CHAPTER IV Controller and processor/Article 25 Data protection by design and by default/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1607,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:53:48.636343Z"
+  },
+  "e816887b-5190-47ea-a184-2d47c8954084": {
+    "article_id": "e816887b-5190-47ea-a184-2d47c8954084",
+    "header_path": "/CHAPTER IV Controller and processor/Article 26 Joint controllers/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1217,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:53:55.403903Z"
+  },
+  "0a49db0c-ebe3-44aa-ad60-d3a31e1452ec": {
+    "article_id": "0a49db0c-ebe3-44aa-ad60-d3a31e1452ec",
+    "header_path": "/CHAPTER IV Controller and processor/Article 27 Representatives of controllers or processors not/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 433,
+    "requirements_extracted": 1,
+    "status": "success",
+    "processed_at": "2026-05-20T16:53:57.815581Z"
+  },
+  "d33e6a90-de11-46a6-85c4-1ce502a7299e": {
+    "article_id": "d33e6a90-de11-46a6-85c4-1ce502a7299e",
+    "header_path": "/CHAPTER IV Controller and processor/Article 28 Processor/",
+    "source_name": "GDPR",
+    "child_count": 18,
+    "text_length": 5824,
+    "requirements_extracted": 12,
+    "status": "success",
+    "processed_at": "2026-05-20T16:54:18.504822Z"
+  },
+  "3f566bbf-1d9a-4801-ad4d-96bcff605de9": {
+    "article_id": "3f566bbf-1d9a-4801-ad4d-96bcff605de9",
+    "header_path": "/CHAPTER IV Controller and processor/Article 30 Records of processing activities/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 1065,
+    "requirements_extracted": 1,
+    "status": "success",
+    "processed_at": "2026-05-20T16:54:22.050918Z"
+  },
+  "2bc0c4f3-c082-4307-84d0-8f48966a6c0e": {
+    "article_id": "2bc0c4f3-c082-4307-84d0-8f48966a6c0e",
+    "header_path": "/CHAPTER IV Controller and processor/Article 32 Security of processing/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1969,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T16:54:34.004706Z"
+  },
+  "23d72458-2bc0-402c-8e81-acff3d81dd05": {
+    "article_id": "23d72458-2bc0-402c-8e81-acff3d81dd05",
+    "header_path": "/CHAPTER IV Controller and processor/Article 32;/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 2879,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T16:54:46.210277Z"
+  },
+  "25f275e4-7da9-479f-add8-53b838189484": {
+    "article_id": "25f275e4-7da9-479f-add8-53b838189484",
+    "header_path": "/CHAPTER IV Controller and processor/Article 33 Notification of a personal data breach to the supervisory/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 1938,
+    "requirements_extracted": 10,
+    "status": "success",
+    "processed_at": "2026-05-20T16:55:12.253116Z"
+  },
+  "e784e012-e783-4da0-8870-0f4609b09055": {
+    "article_id": "e784e012-e783-4da0-8870-0f4609b09055",
+    "header_path": "/CHAPTER IV Controller and processor/Article 34 Communication of a personal data breach to the data subject/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1930,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:55:30.976505Z"
+  },
+  "dc5e57de-5282-4a70-b374-907601e3cdb8": {
+    "article_id": "dc5e57de-5282-4a70-b374-907601e3cdb8",
+    "header_path": "/CHAPTER IV Controller and processor/Article 35 Data protection impact assessment/",
+    "source_name": "GDPR",
+    "child_count": 11,
+    "text_length": 4759,
+    "requirements_extracted": 9,
+    "status": "success",
+    "processed_at": "2026-05-20T16:55:48.752448Z"
+  },
+  "fd69b7e0-bc9a-4790-8b29-3f3381d6cbcc": {
+    "article_id": "fd69b7e0-bc9a-4790-8b29-3f3381d6cbcc",
+    "header_path": "/CHAPTER IV Controller and processor/Article 35;/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 601,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:55:56.822410Z"
+  },
+  "6c554bc5-464e-445f-bd93-e3fb9a212c88": {
+    "article_id": "6c554bc5-464e-445f-bd93-e3fb9a212c88",
+    "header_path": "/CHAPTER IV Controller and processor/Article 36 Prior consultation/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 2789,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:11.504283Z"
+  },
+  "bc4df003-a3d8-4767-ada6-76667000a7b2": {
+    "article_id": "bc4df003-a3d8-4767-ada6-76667000a7b2",
+    "header_path": "/CHAPTER IV Controller and processor/Article 37 Designation of the data protection officer/",
+    "source_name": "GDPR",
+    "child_count": 7,
+    "text_length": 2188,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:23.935550Z"
+  },
+  "233bd3e7-4195-407c-8e65-4e233e6250ae": {
+    "article_id": "233bd3e7-4195-407c-8e65-4e233e6250ae",
+    "header_path": "/CHAPTER IV Controller and processor/Article 38 Position of the data protection officer/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1519,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:38.685606Z"
+  },
+  "cbb2ac25-b1c3-4463-ad18-9b292555c8fe": {
+    "article_id": "cbb2ac25-b1c3-4463-ad18-9b292555c8fe",
+    "header_path": "/CHAPTER IV Controller and processor/Article 39 Tasks of the data protection officer/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 901,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:44.794598Z"
+  },
+  "9bff7d04-edfd-4372-8b84-158ebca358e7": {
+    "article_id": "9bff7d04-edfd-4372-8b84-158ebca358e7",
+    "header_path": "/CHAPTER IV Controller and processor/Article 40 Codes of conduct/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 1323,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:45.518029Z"
+  },
+  "db71bfba-8c0c-497c-92a2-ce2d1be28513": {
+    "article_id": "db71bfba-8c0c-497c-92a2-ce2d1be28513",
+    "header_path": "/CHAPTER IV Controller and processor/Article 41 Monitoring of approved codes of conduct/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 2601,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T16:56:59.153787Z"
+  },
+  "c0fecd9a-ca75-4526-856e-c14fd94ee8d1": {
+    "article_id": "c0fecd9a-ca75-4526-856e-c14fd94ee8d1",
+    "header_path": "/CHAPTER IV Controller and processor/Article 42 Certification/",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 3136,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T16:57:14.493349Z"
+  },
+  "e5e5b653-22c9-4aa4-ba96-3f254a86c72e": {
+    "article_id": "e5e5b653-22c9-4aa4-ba96-3f254a86c72e",
+    "header_path": "/CHAPTER IV Controller and processor/Article 43 Certification bodies/",
+    "source_name": "GDPR",
+    "child_count": 10,
+    "text_length": 4837,
+    "requirements_extracted": 10,
+    "status": "success",
+    "processed_at": "2026-05-20T16:57:36.141320Z"
+  },
+  "bc8a06c9-eef9-4a0d-acf6-5df348f10050": {
+    "article_id": "bc8a06c9-eef9-4a0d-acf6-5df348f10050",
+    "header_path": "/CHAPTER IV Controller and processor/Article 49(1), the documentation of suitable safeguards;/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1257,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:57:44.678922Z"
+  },
+  "e7c4354c-ac0c-4538-9c17-210664a1619d": {
+    "article_id": "e7c4354c-ac0c-4538-9c17-210664a1619d",
+    "header_path": "/CHAPTER IV Controller and processor/Article 49(1), the documentation of suitable safeguards;/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 1150,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:57:53.073963Z"
+  },
+  "30a00290-6582-4a08-a58e-8856bdf36a18": {
+    "article_id": "30a00290-6582-4a08-a58e-8856bdf36a18",
+    "header_path": "/CHAPTER IV Controller and processor/Article 63 to the Board which shall provide an opinion on whether/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1217,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T16:58:11.382553Z"
+  },
+  "9abf8976-5523-4abf-8828-015eb202d214": {
+    "article_id": "9abf8976-5523-4abf-8828-015eb202d214",
+    "header_path": "/CHAPTER IV Controller and processor/Article 9(1) or processing of personal data relating to criminal/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1084,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:58:18.912936Z"
+  },
+  "381d72e3-26a3-4ea1-a837-743dc046f0c0": {
+    "article_id": "381d72e3-26a3-4ea1-a837-743dc046f0c0",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/",
+    "source_name": "GDPR",
+    "child_count": 14,
+    "text_length": 7684,
+    "requirements_extracted": 9,
+    "status": "success",
+    "processed_at": "2026-05-20T16:58:42.701376Z"
+  },
+  "4d4076b2-9b78-4f5d-9177-ad4f265e0f40": {
+    "article_id": "4d4076b2-9b78-4f5d-9177-ad4f265e0f40",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/Article 85 Processing and freedom of expression and information/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1241,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T16:58:49.221750Z"
+  },
+  "2e92522c-1085-4380-922e-7e52a0fe7fe0": {
+    "article_id": "2e92522c-1085-4380-922e-7e52a0fe7fe0",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/Article 88 Processing in the context of employment/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1488,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:58:58.091969Z"
+  },
+  "7b6081d2-6373-47d6-8118-48d482d582a5": {
+    "article_id": "7b6081d2-6373-47d6-8118-48d482d582a5",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/Article 89 Safeguards and derogations relating to processing for/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 2183,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:59:07.512564Z"
+  },
+  "0d714122-1b49-425b-a73f-a7ac6e54baa7": {
+    "article_id": "0d714122-1b49-425b-a73f-a7ac6e54baa7",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/Article 90 Obligations of secrecy/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 951,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T16:59:16.989814Z"
+  },
+  "92c1c51c-53e9-4807-9015-265451406ef7": {
+    "article_id": "92c1c51c-53e9-4807-9015-265451406ef7",
+    "header_path": "/CHAPTER IX Provisions relating to specific processing situations/Article 91 Existing data protection rules of churches and religious/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 753,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T16:59:25.737558Z"
+  },
+  "83ad1158-ffca-4271-874f-5615fd4b9f2f": {
+    "article_id": "83ad1158-ffca-4271-874f-5615fd4b9f2f",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/",
+    "source_name": "GDPR",
+    "child_count": 23,
+    "text_length": 20599,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T16:59:34.463578Z"
+  },
+  "85d21367-92c6-4bf5-b8c9-5411245aaf6d": {
+    "article_id": "85d21367-92c6-4bf5-b8c9-5411245aaf6d",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 45 Transfers on the basis of an adequacy decision/",
+    "source_name": "GDPR",
+    "child_count": 9,
+    "text_length": 5468,
+    "requirements_extracted": 9,
+    "status": "success",
+    "processed_at": "2026-05-20T16:59:55.041225Z"
+  },
+  "a4e448bf-0f62-49ce-a202-002c12291462": {
+    "article_id": "a4e448bf-0f62-49ce-a202-002c12291462",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 46 Transfers subject to appropriate safeguards/",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 2825,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:00:09.333422Z"
+  },
+  "ef48f6fb-638a-495b-b8ce-1abbcb622d68": {
+    "article_id": "ef48f6fb-638a-495b-b8ce-1abbcb622d68",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 47 Binding corporate rules/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 176,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T17:00:09.832867Z"
+  },
+  "fe0db0bd-ef4e-48ef-90ad-e9fb7f56170a": {
+    "article_id": "fe0db0bd-ef4e-48ef-90ad-e9fb7f56170a",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 49 Derogations for specific situations/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 4315,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:00:19.207579Z"
+  },
+  "61e38a95-3ff8-4e05-9f55-b7dd011b9723": {
+    "article_id": "61e38a95-3ff8-4e05-9f55-b7dd011b9723",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 50 International cooperation for the protection of personal/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1067,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:00:28.088077Z"
+  },
+  "5f8e739e-7c17-468f-8a8c-48c5c7062d65": {
+    "article_id": "5f8e739e-7c17-468f-8a8c-48c5c7062d65",
+    "header_path": "/CHAPTER V Transfers of personal data to third countries or international organisations/Article 63, provided that they:/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 5279,
+    "requirements_extracted": 16,
+    "status": "success",
+    "processed_at": "2026-05-20T17:00:56.319869Z"
+  },
+  "51736c5f-d95e-4301-bcb3-21166ead9143": {
+    "article_id": "51736c5f-d95e-4301-bcb3-21166ead9143",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/",
+    "source_name": "GDPR",
+    "child_count": 32,
+    "text_length": 18677,
+    "requirements_extracted": 8,
+    "status": "success",
+    "processed_at": "2026-05-20T17:01:16.176044Z"
+  },
+  "5f7d555e-0fea-4cc9-b725-9e15e10d95e6": {
+    "article_id": "5f7d555e-0fea-4cc9-b725-9e15e10d95e6",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 19;/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 1792,
+    "requirements_extracted": 10,
+    "status": "success",
+    "processed_at": "2026-05-20T17:01:39.812397Z"
+  },
+  "a775e0c9-996f-4fc7-b3a2-7eba298ddc2f": {
+    "article_id": "a775e0c9-996f-4fc7-b3a2-7eba298ddc2f",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 46(3);/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1175,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T17:01:52.858699Z"
+  },
+  "ba99e46d-466f-4c9f-942c-b3d856d55fb7": {
+    "article_id": "ba99e46d-466f-4c9f-942c-b3d856d55fb7",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 46(3);/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1038,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:02:05.900671Z"
+  },
+  "58921d34-c4c6-4647-aa06-45f41069148f": {
+    "article_id": "58921d34-c4c6-4647-aa06-45f41069148f",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 51 Supervisory authority/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1023,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:02:16.807810Z"
+  },
+  "077f6e25-e4d3-4a72-8f82-34b33a626cc4": {
+    "article_id": "077f6e25-e4d3-4a72-8f82-34b33a626cc4",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 52 Independence/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1584,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T17:02:30.927205Z"
+  },
+  "64533f55-b2ea-4c28-ad7d-26dd6e2609c4": {
+    "article_id": "64533f55-b2ea-4c28-ad7d-26dd6e2609c4",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 53 General conditions for the members of the supervisory/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 948,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:02:43.534927Z"
+  },
+  "d1ba62a1-2fb8-4459-9301-03abf6ecfdfc": {
+    "article_id": "d1ba62a1-2fb8-4459-9301-03abf6ecfdfc",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 54 Rules on the establishment of the supervisory authority 1./",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1762,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:03:02.440036Z"
+  },
+  "6987a67c-d90d-485d-95cf-08ee11c342af": {
+    "article_id": "6987a67c-d90d-485d-95cf-08ee11c342af",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 55 Competence/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 655,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T17:03:11.733565Z"
+  },
+  "950b7650-f24e-4196-81ab-d2a9856ca4e3": {
+    "article_id": "950b7650-f24e-4196-81ab-d2a9856ca4e3",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 56 Competence of the lead supervisory authority/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 2082,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:03:32.096367Z"
+  },
+  "d310fce5-52ff-4a3c-8a1b-095a7ad72553": {
+    "article_id": "d310fce5-52ff-4a3c-8a1b-095a7ad72553",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 57 Tasks/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 2920,
+    "requirements_extracted": 13,
+    "status": "success",
+    "processed_at": "2026-05-20T17:04:01.225755Z"
+  },
+  "5d3685fa-492c-485e-992a-79bcd101c007": {
+    "article_id": "5d3685fa-492c-485e-992a-79bcd101c007",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 58 Powers/",
+    "source_name": "GDPR",
+    "child_count": 7,
+    "text_length": 2187,
+    "requirements_extracted": 14,
+    "status": "success",
+    "processed_at": "2026-05-20T17:04:38.143937Z"
+  },
+  "cbc0a63a-0e65-4da5-bad7-a557356cd7d9": {
+    "article_id": "cbc0a63a-0e65-4da5-bad7-a557356cd7d9",
+    "header_path": "/CHAPTER VI Independent supervisory authorities/Article 63./",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 220,
+    "requirements_extracted": 1,
+    "status": "success",
+    "processed_at": "2026-05-20T17:04:42.544724Z"
+  },
+  "82e0a92d-cbe1-4434-8b41-a295ae0c48b9": {
+    "article_id": "82e0a92d-cbe1-4434-8b41-a295ae0c48b9",
+    "header_path": "/CHAPTER VII Cooperation and consistency/",
+    "source_name": "GDPR",
+    "child_count": 74,
+    "text_length": 34811,
+    "requirements_extracted": 15,
+    "status": "success",
+    "processed_at": "2026-05-20T17:05:33.795171Z"
+  },
+  "40dbdac0-cd64-44e5-abb4-9d40cc18124a": {
+    "article_id": "40dbdac0-cd64-44e5-abb4-9d40cc18124a",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 47./",
+    "source_name": "GDPR",
+    "child_count": 7,
+    "text_length": 2904,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T17:05:54.596523Z"
+  },
+  "3e1d38fb-a84f-47b9-a712-9d79ca58010e": {
+    "article_id": "3e1d38fb-a84f-47b9-a712-9d79ca58010e",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 56(1) or (4) shall invite the supervisory authority of each/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 2802,
+    "requirements_extracted": 9,
+    "status": "success",
+    "processed_at": "2026-05-20T17:06:18.563481Z"
+  },
+  "69720cfb-afa0-489b-9d44-5c0f924af8cf": {
+    "article_id": "69720cfb-afa0-489b-9d44-5c0f924af8cf",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 60 Cooperation between the lead supervisory authority and the/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 632,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:06:31.447219Z"
+  },
+  "cfbdf324-e6f0-45c1-8c54-0f21d3d84af6": {
+    "article_id": "cfbdf324-e6f0-45c1-8c54-0f21d3d84af6",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 61 Mutual assistance/",
+    "source_name": "GDPR",
+    "child_count": 9,
+    "text_length": 3363,
+    "requirements_extracted": 8,
+    "status": "success",
+    "processed_at": "2026-05-20T17:06:49.990457Z"
+  },
+  "84d37069-196b-49d2-8169-4dd4ff1dd041": {
+    "article_id": "84d37069-196b-49d2-8169-4dd4ff1dd041",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 62 Joint operations of supervisory authorities/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 724,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:06:55.373199Z"
+  },
+  "2bbf03d4-9fd4-4ecb-a338-a0db4677bb35": {
+    "article_id": "2bbf03d4-9fd4-4ecb-a338-a0db4677bb35",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 62, in particular for carrying out investigations or for/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 1000,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:04.111236Z"
+  },
+  "9a6cbf10-c646-442e-8035-c888a197b358": {
+    "article_id": "9a6cbf10-c646-442e-8035-c888a197b358",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 63./",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 3269,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:21.116478Z"
+  },
+  "799b5158-507a-4b68-a6ba-a7668c3aca25": {
+    "article_id": "799b5158-507a-4b68-a6ba-a7668c3aca25",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 64 Opinion of the Board/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 422,
+    "requirements_extracted": 1,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:23.922174Z"
+  },
+  "09b643bd-0a8c-4965-b41b-45784a8e645b": {
+    "article_id": "09b643bd-0a8c-4965-b41b-45784a8e645b",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 64. In that case, any supervisory authority concerned or/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 2684,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:34.601952Z"
+  },
+  "fe4056dd-748f-4102-93dd-ce9866133407": {
+    "article_id": "fe4056dd-748f-4102-93dd-ce9866133407",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 65 Dispute resolution by the Board/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 1060,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:44.526966Z"
+  },
+  "f7185fb8-16b8-4be3-bee4-92a7d67b817e": {
+    "article_id": "f7185fb8-16b8-4be3-bee4-92a7d67b817e",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 66 Urgency procedure/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 1732,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:55.729965Z"
+  },
+  "9dd805ad-46b0-468f-acdb-355fcf4c3524": {
+    "article_id": "9dd805ad-46b0-468f-acdb-355fcf4c3524",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 68 European Data Protection Board/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1257,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T17:07:56.686242Z"
+  },
+  "eb057a8b-18ac-4b5e-9aec-0fba71e5609e": {
+    "article_id": "eb057a8b-18ac-4b5e-9aec-0fba71e5609e",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 69 Independence/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 410,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:04.548739Z"
+  },
+  "4febe7e0-5f16-43eb-8a45-31db19519758": {
+    "article_id": "4febe7e0-5f16-43eb-8a45-31db19519758",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 70 Tasks of the Board/",
+    "source_name": "GDPR",
+    "child_count": 1,
+    "text_length": 2789,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:21.692942Z"
+  },
+  "73da687a-2452-4c86-900d-b8a280cf408e": {
+    "article_id": "73da687a-2452-4c86-900d-b8a280cf408e",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 71 Reports/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 602,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:33.860096Z"
+  },
+  "ccfbee96-4581-4bb5-befb-9b7b29b3f986": {
+    "article_id": "ccfbee96-4581-4bb5-befb-9b7b29b3f986",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 72 Procedure/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 299,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:37.671953Z"
+  },
+  "c66472bc-0d55-4823-a2e0-ddae74539a55": {
+    "article_id": "c66472bc-0d55-4823-a2e0-ddae74539a55",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 73 Chair/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 234,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:41.925145Z"
+  },
+  "179891e2-62b0-4a74-ac26-199558225192": {
+    "article_id": "179891e2-62b0-4a74-ac26-199558225192",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 74 Tasks of the Chair/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 604,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:08:49.950143Z"
+  },
+  "e274c264-2ad3-478a-909d-f5d477af7805": {
+    "article_id": "e274c264-2ad3-478a-909d-f5d477af7805",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 75 Secretariat/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1682,
+    "requirements_extracted": 11,
+    "status": "success",
+    "processed_at": "2026-05-20T17:09:10.909389Z"
+  },
+  "f6282d36-a44d-49ee-bafe-1982d04e8a20": {
+    "article_id": "f6282d36-a44d-49ee-bafe-1982d04e8a20",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 76 Confidentiality/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 387,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:09:19.595611Z"
+  },
+  "18c251ed-5b59-4585-ad6e-35895948df40": {
+    "article_id": "18c251ed-5b59-4585-ad6e-35895948df40",
+    "header_path": "/CHAPTER VII Cooperation and consistency/Article 83;/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 3827,
+    "requirements_extracted": 14,
+    "status": "success",
+    "processed_at": "2026-05-20T17:09:46.840605Z"
+  },
+  "15e36e1c-9afe-4b74-9c14-4b1d59219bee": {
+    "article_id": "15e36e1c-9afe-4b74-9c14-4b1d59219bee",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/",
+    "source_name": "GDPR",
+    "child_count": 29,
+    "text_length": 13572,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:10:02.840247Z"
+  },
+  "15ca97bd-addd-4a56-b1d5-14cc72da8db9": {
+    "article_id": "15ca97bd-addd-4a56-b1d5-14cc72da8db9",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 77 Right to lodge a complaint with a supervisory authority/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 704,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:10:08.898375Z"
+  },
+  "2f1b4a33-9350-477e-a327-2876dfd8e522": {
+    "article_id": "2f1b4a33-9350-477e-a327-2876dfd8e522",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 78 Right to an effective judicial remedy against a supervisory/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 1148,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:10:17.740762Z"
+  },
+  "246219e6-bf32-4f24-aff9-1d27c1992910": {
+    "article_id": "246219e6-bf32-4f24-aff9-1d27c1992910",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 79 Right to an effective judicial remedy against a controller/",
+    "source_name": "GDPR",
+    "child_count": 4,
+    "text_length": 2237,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:10:33.352035Z"
+  },
+  "54c2c7ce-9995-416a-96e2-7318278a0d88": {
+    "article_id": "54c2c7ce-9995-416a-96e2-7318278a0d88",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 81 Suspension of proceedings/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 952,
+    "requirements_extracted": 3,
+    "status": "success",
+    "processed_at": "2026-05-20T17:10:46.119654Z"
+  },
+  "5a2fdaf3-4f68-4d51-92ee-ad62043c83b2": {
+    "article_id": "5a2fdaf3-4f68-4d51-92ee-ad62043c83b2",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 82 Right to compensation and liability/",
+    "source_name": "GDPR",
+    "child_count": 6,
+    "text_length": 1847,
+    "requirements_extracted": 7,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:02.863757Z"
+  },
+  "738d8d04-6039-42cc-b682-2f7ac1c13a4e": {
+    "article_id": "738d8d04-6039-42cc-b682-2f7ac1c13a4e",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 83 General conditions for imposing administrative fines/",
+    "source_name": "GDPR",
+    "child_count": 9,
+    "text_length": 5986,
+    "requirements_extracted": 8,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:25.546915Z"
+  },
+  "30370c8c-da3d-47a7-8630-30e27278a9cc": {
+    "article_id": "30370c8c-da3d-47a7-8630-30e27278a9cc",
+    "header_path": "/CHAPTER VIII Remedies, liability and penalties/Article 84 Penalties/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 600,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:31.750855Z"
+  },
+  "1bb03503-a8a7-451f-a08b-040b179f9932": {
+    "article_id": "1bb03503-a8a7-451f-a08b-040b179f9932",
+    "header_path": "/CHAPTER X Delegated acts and implementing acts/",
+    "source_name": "GDPR",
+    "child_count": 8,
+    "text_length": 2030,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:45.296572Z"
+  },
+  "ef24dd10-dd4c-4120-b6c5-f6fd54d2d238": {
+    "article_id": "ef24dd10-dd4c-4120-b6c5-f6fd54d2d238",
+    "header_path": "/CHAPTER X Delegated acts and implementing acts/Article 92 Exercise of the delegation/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 1537,
+    "requirements_extracted": 6,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:56.620458Z"
+  },
+  "4f521e6c-c833-4ab0-9821-0a0c2088dd46": {
+    "article_id": "4f521e6c-c833-4ab0-9821-0a0c2088dd46",
+    "header_path": "/CHAPTER X Delegated acts and implementing acts/Article 93 Committee procedure/",
+    "source_name": "GDPR",
+    "child_count": 3,
+    "text_length": 438,
+    "requirements_extracted": 0,
+    "status": "success",
+    "processed_at": "2026-05-20T17:11:57.065309Z"
+  },
+  "c3ebb7e1-fe29-4413-9476-d7a30d37c271": {
+    "article_id": "c3ebb7e1-fe29-4413-9476-d7a30d37c271",
+    "header_path": "/CHAPTER XI Final provisions/",
+    "source_name": "GDPR",
+    "child_count": 9,
+    "text_length": 4998,
+    "requirements_extracted": 4,
+    "status": "success",
+    "processed_at": "2026-05-20T17:12:06.063301Z"
+  },
+  "5f86b7c6-b319-4f0c-81e3-1122bb91d338": {
+    "article_id": "5f86b7c6-b319-4f0c-81e3-1122bb91d338",
+    "header_path": "/CHAPTER XI Final provisions/Article 94 Repeal of Directive 95/46/EC/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 342,
+    "requirements_extracted": 1,
+    "status": "success",
+    "processed_at": "2026-05-20T17:12:08.022369Z"
+  },
+  "c499a13a-9b0d-4fc7-ac67-f27e2b882e99": {
+    "article_id": "c499a13a-9b0d-4fc7-ac67-f27e2b882e99",
+    "header_path": "/CHAPTER XI Final provisions/Article 97 Commission reports/",
+    "source_name": "GDPR",
+    "child_count": 5,
+    "text_length": 1372,
+    "requirements_extracted": 5,
+    "status": "success",
+    "processed_at": "2026-05-20T17:12:19.798605Z"
+  },
+  "b51e8800-f6cb-4b14-b5d6-27f702d87a26": {
+    "article_id": "b51e8800-f6cb-4b14-b5d6-27f702d87a26",
+    "header_path": "/CHAPTER XI Final provisions/Article 99 Entry into force and application/",
+    "source_name": "GDPR",
+    "child_count": 2,
+    "text_length": 1716,
+    "requirements_extracted": 2,
+    "status": "success",
+    "processed_at": "2026-05-20T17:12:23.725792Z"
+  }
+}

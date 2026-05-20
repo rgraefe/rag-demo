@@ -87,3 +87,5 @@ If you don't want to use OpenAI you can try llama3 installed in the Ollama docke
 ## Usage
 
 The directory `notebooks` contains several Jupyter notebooks demonstrating different aspects of the use case implementation. Notebook `create_new_vectorindex.ipynb` demonstrate parsing and storing PDF files for the Regulatory Gap Analysis use case. Notebook `parent_retriever.ipynb` demonstrates retrieving parent/child related documents based on the parsed PDF files.
+
+Notebook `detect_conflicts.ipynb` extracts requirements from legal documents and stores them in Json for later use. This runs relatively long but does not need to run frequently because once the requirements are extracted as JSON they can easily be used to compate ot policy documents.
